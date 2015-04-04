@@ -60,14 +60,11 @@ ColumnLayout {
         Slider {
           id: speed_slider
           activeFocusOnPress: true
+          updateValueWhileDragging: true
           width: parent.parent.width - speed_label.width - (parent.spacing * 4)
           minimumValue: .01
           maximumValue: 1
           value: .5
-
-          Keys.onPressed: {
-            renderer.setDelay(value);
-          }
         }
       }
     }

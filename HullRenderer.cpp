@@ -2,7 +2,9 @@
 
 #include <QDebug>
 
-HullRenderer::HullRenderer(QQuickItem *parent) : QQuickPaintedItem(parent) { }
+HullRenderer::HullRenderer(QQuickItem *parent) : QQuickPaintedItem(parent) {
+  setRenderTarget(QQuickPaintedItem::FramebufferObject);
+}
 
 void HullRenderer::paint(QPainter *painter) {
 
@@ -10,9 +12,8 @@ void HullRenderer::paint(QPainter *painter) {
 
   painter->setRenderHint(QPainter::Antialiasing);
 
-  QBrush brush(QColor("#007430"));
-  QPen pointPen(brush, 10);
-  QPen linePen(brush, 4);
+  QPen pointPen(QBrush(Qt::blue), 10, Qt::SolidLine, Qt::RoundCap);
+  QPen linePen(QBrush(Qt::black), 4, Qt::SolidLine, Qt::RoundCap);
 
   HullState state = timeline.getEvents()[position];
 

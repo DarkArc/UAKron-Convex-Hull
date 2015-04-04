@@ -1,31 +1,33 @@
 #ifndef DUMMYALGORITHM_HPP
 #define DUMMYALGORITHM_HPP
 
+#include <chrono>
+#include <random>
+
 #include "HullAlgorithm.hpp"
 
 class DummyAlgorithm : public HullAlgorithm {
 
   virtual HullTimeline getTimeline() {
-    QPoint p1(10, 20);
-    QPoint p2(10, 20);
-    QPoint p3(30, 40);
-    QPoint p4(12, 344);
 
-    std::vector<QPoint> points({p1, p2, p3, p4});
+    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+    std::minstd_rand0 generator (seed);
 
-    QLine l1(p1, p2);
-    QLine l2(p2, p3);
-    QLine l3(p3, p4);
+    std::vector<QPoint> points;
 
-    std::vector<QLine> pSet1{l1};
-    std::vector<QLine> pSet2{l1, l2};
-    std::vector<QLine> pSet3{l2, l3};
+    for (int i = 0; i < 350; ++i) {
+      points.push_back(QPoint(generator(), generator()));
+    }
 
-    HullState s1(points, pSet1);
-    HullState s2(points, pSet2);
-    HullState s3(points, pSet3);
-
-    std::vector<HullState> stages{s1, s2, s3};
+    std::vector<HullState> stages;
+    for (unsigned int i = 0; i < points.size(); ++i) {
+      std::vector<QLine> lines;
+      if (i > 0) {
+        lines = stages[i - 1].getLines();
+        lines.push_back(QLine(points[i - 1], points[i]));
+      }
+      stages.push_back(HullState(points, lines));
+    }
     return HullTimeline(stages);
   }
 };
