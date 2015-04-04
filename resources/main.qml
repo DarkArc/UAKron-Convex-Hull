@@ -17,7 +17,7 @@ ColumnLayout {
     Timer {
       interval: speed_slider.value * 2000; running: true; repeat: true
       onTriggered: renderer.advance()
-  }
+    }
   }
 
   RowLayout {
