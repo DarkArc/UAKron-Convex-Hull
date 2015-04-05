@@ -45,8 +45,8 @@ void HullRenderer::setTimeline(const HullTimeline& timeline) {
 void HullRenderer::advance() {
   if (position < timeline.getEventCount() - 1) {
     ++position;
+    update();
   }
-  update();
 }
 
 QPointF HullRenderer::adjustPoint(const QPoint& point) const {
