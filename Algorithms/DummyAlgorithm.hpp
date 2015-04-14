@@ -39,25 +39,28 @@ class DummyAlgorithm : public HullAlgorithm {
     DummyAlgorithm()
     {
       /* Initialized the points */
-      points.push_back(QPoint(0,3));	// We can probably overload an << operator
-      points.push_back(QPoint(1,1));	// to stream in from a file to make this
+      points.push_back(QPoint(5,5));	// We can probably overload an << operator
+      points.push_back(QPoint(3,4));	// to stream in from a file to make this
       points.push_back(QPoint(2,2));	// easier. Just a thought though.
       points.push_back(QPoint(4,4));
-      points.push_back(QPoint(0,0));
+      points.push_back(QPoint(4,2));
       points.push_back(QPoint(1,2));
+      points.push_back(QPoint(3,7));
       points.push_back(QPoint(3,1));
-      points.push_back(QPoint(3,3));
       /* End initialization of points */   
     }
 
 
     /* Member Functions */
       QPoint& findSmallestYPoint(std::vector<QPoint>&);
+      void swap(QPoint&,QPoint&);
       
 
   // virtual function to tell QT how to render the convex hull
   virtual HullTimeline getTimeline() {
 
+    swap(points[0], findSmallestYPoint(points));
+    
     for (unsigned int i = 0; i < points.size(); ++i) {
       std::vector<QLine> lines;
       if (i > 0) {
@@ -70,11 +73,35 @@ class DummyAlgorithm : public HullAlgorithm {
   }
 };
 
+/* Function Definitions */
 
-QPoint& findSmallesYPoint(std::vector<QPoint>& points)
+//===================================================================
+QPoint& DummyAlgorithm::findSmallestYPoint(std::vector<QPoint>& points)
 {
-    //Find the bottom most point
-    
+    //Initialized the values for the for loop
+    int minY = points[0].y();
+    int minIndex = 0;
 
+    // Find the point with the smallest y value
+    for(unsigned int i = 1; i < points.size(); ++i)
+    {
+       int y = points[i].y();
+       if((y < minY || (minY == y && points[i].x() < points[minIndex].x())))
+       {
+         minY = points[i].y();
+         minIndex = i;
+       }
+    }
+    
+    return points[minIndex];
 }
+
+//===================================================================
+void DummyAlgorithm::swap(QPoint& p1, QPoint& p2)
+{
+    QPoint temp = p1;
+    p1 = p2;
+    p2 = temp;
+}
+
 #endif
