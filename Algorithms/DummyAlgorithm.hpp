@@ -26,6 +26,7 @@
   int ccw(QPoint, QPoint, QPoint);
   int distance(QPoint const&, QPoint const&);
   int sqrDist(QPoint const&, QPoint const&);
+  bool polarCompare(QPoint, QPoint);
 
   // Pivot point
   QPoint p0;
