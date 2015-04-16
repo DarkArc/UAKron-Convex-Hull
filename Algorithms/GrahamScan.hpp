@@ -47,7 +47,7 @@ class GrahamScan : public HullAlgorithm {
   public:
     GrahamScan()
     {
-      for(int i = 0; i < 20; ++i)
+      for(int i = 0; i < 350; ++i)
       {
           int x = rand()% 50 + 1;
           int y = rand()% 50 + 1;
@@ -261,7 +261,7 @@ std::vector<QPoint> merge(std::vector<QPoint> left, std::vector<QPoint> right)
     }
     return result;
 }
-
+//======================================================================
 std::vector<QPoint> mergeSort(std::vector<QPoint> points)
 {
     if(points.size() <= 1)
@@ -286,6 +286,20 @@ std::vector<QPoint> mergeSort(std::vector<QPoint> points)
 
     return result;
 }
+//======================================================================
+/*
+    Pre:  
+    Post: Returns a stack of all the points on the convex hull
+   
+    Desc: Complexity is:
+          Find smallest Y value = O(n)
+          Sort points = O(nlog(n))
+          Find hull = O(n)
+
+    The full relation is: nlog(n) + 2n. Dropping the linear factor we get
+    O(nlog(n)) complexity for the full algorithm.
+
+*/
 
 std::stack<QPoint> grahamScan(std::vector<QPoint>& points)
 {
