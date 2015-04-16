@@ -25,7 +25,7 @@ int main(int argc, char** argv) {
   HullRenderer* renderer = view.rootObject()->findChild<HullRenderer*>("renderer");
 
   GrahamScan algo;
-  RandomPointInput input(20);
+  RandomPointInput input(50);
   HullSolver solver(algo, input);
 
   QObject::connect(&solver, SIGNAL(solutionFound(const HullTimeline&)),

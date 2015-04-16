@@ -1,5 +1,7 @@
 #include "GrahamScan.hpp"
 
+#include <QLine>
+
 #include <algorithm>
 #include <stdexcept>
 #include <cstdio>
@@ -48,15 +50,35 @@ HullTimeline GrahamScan::getTimeline(const std::vector<QPoint>& nPts) {
     }
     hullStack.push(pts[i]);
 
-    std::vector<QPoint> snapshot;
+    std::vector<QPoint> pSnap;
+    std::vector<QLine> lSnap;
+
     auto hsClone = hullStack;
     while (!hsClone.empty()) {
-      snapshot.push_back(hsClone.top());
+      pSnap.push_back(hsClone.top());
       hsClone.pop();
     }
 
-    stages.push_back(HullState(snapshot, std::vector<QLine>()));
+    for (unsigned int k = 0; k < pSnap.size() - 1; ++k) {
+      lSnap.push_back(QLine(pSnap[k], pSnap[k + 1]));
+    }
+
+    if (i != pts.size() - 1) {
+      for (unsigned int k = i; k < pts.size(); ++k) {
+        pSnap.push_back(pts[k]);
+      }
+    }
+
+    stages.push_back(HullState(pSnap, lSnap));
   }
+
+  HullState last = *stages.rbegin();
+  auto finalPoints = last.getPoints();
+  auto finalLines = last.getLines();
+
+  finalLines.push_back(QLine(*finalPoints.begin(), *finalPoints.rbegin()));
+
+  stages.push_back(HullState(finalPoints, finalLines));
 
   return HullTimeline(stages);
 }
