@@ -53,7 +53,7 @@ QPointF HullRenderer::adjustPoint(const QPoint& point) const {
   QPoint max = timeline.getMax();
 
   double ratioX = point.x() / static_cast<double>(max.x());
-  double ratioY = point.y() / static_cast<double>(max.y());
+  double ratioY = (max.y() - point.y()) / static_cast<double>(max.y());
 
   auto boundingRec = contentsBoundingRect();
   return QPointF(((boundingRec.width() - 20) * ratioX) + 10, ((boundingRec.height() - 20) * ratioY) + 10);
