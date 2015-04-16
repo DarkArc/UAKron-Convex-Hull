@@ -40,38 +40,21 @@ HullTimeline GrahamScan::getTimeline(const std::vector<QPoint>& nPts) {
 
   // Create the hull's stack
   std::stack<QPoint> hullStack;
-  hullStack.push(pts[0]);
-  hullStack.push(pts[1]);
-  hullStack.push(pts[2]);
+  for (unsigned int i = 0; i < 3; ++ i) {
+    hullStack.push(pts[i]);
+    stages.push_back(captureSnapShot(hullStack, i));
+  }
 
   for (unsigned int i = 3; i < pts.size(); ++i) {
     while (ccw(secondToTop(hullStack), hullStack.top(), pts[i]) != 2) {
       hullStack.pop();
+      stages.push_back(captureSnapShot(hullStack, i));
     }
     hullStack.push(pts[i]);
-
-    std::vector<QPoint> pSnap;
-    std::vector<QLine> lSnap;
-
-    auto hsClone = hullStack;
-    while (!hsClone.empty()) {
-      pSnap.push_back(hsClone.top());
-      hsClone.pop();
-    }
-
-    for (unsigned int k = 0; k < pSnap.size() - 1; ++k) {
-      lSnap.push_back(QLine(pSnap[k], pSnap[k + 1]));
-    }
-
-    if (i != pts.size() - 1) {
-      for (unsigned int k = i; k < pts.size(); ++k) {
-        pSnap.push_back(pts[k]);
-      }
-    }
-
-    stages.push_back(HullState(pSnap, lSnap));
+    stages.push_back(captureSnapShot(hullStack, i));
   }
 
+  // Finalize the hull by adding the connecting snapshot
   HullState last = *stages.rbegin();
   auto finalPoints = last.getPoints();
   auto finalLines = last.getLines();
@@ -81,6 +64,30 @@ HullTimeline GrahamScan::getTimeline(const std::vector<QPoint>& nPts) {
   stages.push_back(HullState(finalPoints, finalLines));
 
   return HullTimeline(stages);
+}
+
+HullState GrahamScan::captureSnapShot(std::stack<QPoint> hullStack,
+    const unsigned int& iteration) const {
+
+  std::vector<QPoint> pSnap;
+  std::vector<QLine> lSnap;
+
+  while (!hullStack.empty()) {
+    pSnap.push_back(hullStack.top());
+    hullStack.pop();
+  }
+
+  for (unsigned int k = 0; k < pSnap.size() - 1; ++k) {
+    lSnap.push_back(QLine(pSnap[k], pSnap[k + 1]));
+  }
+
+  if (iteration != pts.size() - 1) {
+    for (unsigned int k = iteration; k < pts.size(); ++k) {
+      pSnap.push_back(pts[k]);
+    }
+  }
+
+  return HullState(pSnap, lSnap);
 }
 
 /* Function Definitions */
