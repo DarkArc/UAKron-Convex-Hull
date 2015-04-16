@@ -58,6 +58,13 @@ class GrahamScan : public HullAlgorithm {
       points.push_back(QPoint(3,1));
       points.push_back(QPoint(3,3));
 
+      for(int i = 0; i < 100; ++i)
+      {
+          int x = rand() % 50 + 1;
+          int y = rand() % 50 + 1;
+          points.push_back(QPoint(x,y));
+      }
+
       /*
       unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
       std::minstd_rand0 generator (seed);
@@ -70,7 +77,7 @@ class GrahamScan : public HullAlgorithm {
           }
           points.push_back(p);
       }
-      */
+     */
     }
 
   virtual HullTimeline getTimeline() {
@@ -86,7 +93,7 @@ class GrahamScan : public HullAlgorithm {
     }
 
     // Generate the line stages
-    for (unsigned int i = 0; i < points.size()-1; ++i) {
+    for (unsigned int i = 0; i < hullPoints.size(); ++i) {
       std::vector<QLine> lines;
       if (i > 0) {
         lines = stages[i - 1].getLines();
