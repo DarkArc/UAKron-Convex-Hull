@@ -19,6 +19,7 @@
 #include <random>
 #include <stack>   // Hold the convex hull points
 #include <algorithm>
+#include <stdexcept>
 
 #include "HullAlgorithm.hpp"
 
@@ -53,7 +54,11 @@ class GrahamScan : public HullAlgorithm {
 
       for(int i = 0; i < 100; ++i)
       {
-          points.push_back(QPoint(generator(), generator()));
+          QPoint p(generator(), generator());
+          if (p.x() < 0 || p.y() < 0) {
+            throw std::runtime_error("Negative point! Aborting!");
+          }
+          points.push_back(p);
       }
     }
 
