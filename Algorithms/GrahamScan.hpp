@@ -15,7 +15,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
+#include <chrono>
+#include <random>
 #include <stack>   // Hold the convex hull points
 #include <algorithm>
 
@@ -47,12 +48,12 @@ class GrahamScan : public HullAlgorithm {
   public:
     GrahamScan()
     {
+      unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+      std::minstd_rand0 generator (seed);
+
       for(int i = 0; i < 100; ++i)
       {
-          int x = rand()% 50 + 1;
-          int y = rand()% 50 + 1;
-
-          points.push_back(QPoint(x, y));
+          points.push_back(QPoint(generator(), generator()));
       }
     }
 
@@ -110,7 +111,7 @@ QPoint &findSmallestYPoint(std::vector<QPoint>& points)
          minIndex = i;
        }
     }
-    
+
     return points[minIndex];
 }
 
@@ -151,9 +152,9 @@ QPoint secondToTop(std::stack<QPoint>& s)
 //======================================================================
 
 /*
-    Pre:  
+    Pre:
     Post: Returns 1 if points are clockwise, and 2 if counter-clockwise,
-          and == 0 if collinear. 
+          and == 0 if collinear.
 
     Desc: Complexity is O(1). Reference http://en.wikipedia.org/wiki/Graham_scan
           for psuedo code implementation.
@@ -173,7 +174,7 @@ int ccw(QPoint p1, QPoint p2, QPoint p3)
 //======================================================================
 
 /*
-    Pre: 
+    Pre:
     Post: Returns the square of the distance between two points
 
     Desc: Complexity is O(1)
@@ -189,7 +190,7 @@ int sqrDist(QPoint const& p1, QPoint const& p2)
 
 /*
     Pre:  Two valid QPoints, and the pivot point (p0) must be defined.
-    Post: 
+    Post:
          If colinear it returns true if the first point is closer to the
          pivot point; false otherwise.
 
@@ -288,9 +289,9 @@ std::vector<QPoint> mergeSort(std::vector<QPoint> points)
 }
 //======================================================================
 /*
-    Pre:  
+    Pre:
     Post: Returns a stack of all the points on the convex hull
-   
+
     Desc: Complexity is:
           Find smallest Y value = O(n)
           Sort points = O(nlog(n))
