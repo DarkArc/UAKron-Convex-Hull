@@ -26,6 +26,15 @@ void HullRenderer::paint(QPainter *painter) {
   // Draw Lines
   painter->setPen(linePen);
   for (auto& line : state.getLines()) {
+    // TODO Remove
+    // START Debug
+    auto p1 = line.p1();
+    auto p2 = line.p2();
+    qDebug() << "Attempting to print line from: ("
+      << p1.x() << ", " << p1.y() << ") to: ("
+      << p2.x() << ", " << p2.y() << ")\n";
+    // END Debug
+    
     auto&& start = adjustPoint(line.p1());
     auto&& end = adjustPoint(line.p2());
     painter->drawLine(start, end);
