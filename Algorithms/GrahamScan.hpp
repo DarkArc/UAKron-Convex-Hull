@@ -49,35 +49,17 @@ class GrahamScan : public HullAlgorithm {
   public:
     GrahamScan()
     {
-      points.push_back(QPoint(0,3));
-      points.push_back(QPoint(1,1));
-      points.push_back(QPoint(2,2));
-      points.push_back(QPoint(4,4));
-      points.push_back(QPoint(0,0));
-      points.push_back(QPoint(1,2));
-      points.push_back(QPoint(3,1));
-      points.push_back(QPoint(3,3));
-
-      for(int i = 0; i < 100; ++i)
-      {
-          int x = rand() % 50 + 1;
-          int y = rand() % 50 + 1;
-          points.push_back(QPoint(x,y));
-      }
-
-      /*
       unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
       std::minstd_rand0 generator (seed);
 
       for(int i = 0; i < 100; ++i)
       {
-          QPoint p(generator(), generator());
+          QPoint p(generator() % 1000, generator() % 1000);
           if (p.x() < 0 || p.y() < 0) {
             throw std::runtime_error("Negative point! Aborting!");
           }
           points.push_back(p);
       }
-     */
     }
 
   virtual HullTimeline getTimeline() {
