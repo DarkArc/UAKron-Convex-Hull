@@ -3,7 +3,8 @@ QT += qml quick
 CONFIG += qt debug
 CONFIG += c++11
 
-HEADERS += Algorithms/HullAlgorithm.hpp
+HEADERS += Algorithms/HullAlgorithm.hpp \
+    Algorithms/GrahamScan.hpp
 HEADERS += Algorithms/HullSolver.hpp
 HEADERS += HullRenderer.hpp
 HEADERS += HullState.hpp

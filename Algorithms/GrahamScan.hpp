@@ -47,7 +47,7 @@ class GrahamScan : public HullAlgorithm {
   public:
     GrahamScan()
     {
-      for(int i = 0; i < 350; ++i)
+      for(int i = 0; i < 100; ++i)
       {
           int x = rand()% 50 + 1;
           int y = rand()% 50 + 1;

@@ -2,13 +2,16 @@
 #include <QtQuick/QQuickView>
 
 #include "Algorithms/HullSolver.hpp"
-#include "Algorithms/DummyAlgorithm.hpp"
+#include "Algorithms/GrahamScan.hpp"
 
 #include "HullState.hpp"
 #include "HullRenderer.hpp"
 #include "HullTimeline.hpp"
 
 int main(int argc, char** argv) {
+
+  srand(time(NULL));
+
   QGuiApplication app(argc, argv);
 
   qmlRegisterType<HullRenderer>("com.nearce.HullRenderer", 1, 0, "HullRenderer");
@@ -20,7 +23,7 @@ int main(int argc, char** argv) {
 
   HullRenderer* renderer = view.rootObject()->findChild<HullRenderer*>("renderer");
 
-  DummyAlgorithm algo;
+  GrahamScan algo;
   HullSolver solver(algo);
 
   QObject::connect(&solver, SIGNAL(solutionFound(const HullTimeline&)),
