@@ -1,9 +1,10 @@
 #include <QGuiApplication>
 #include <QtQuick/QQuickView>
 
-#include "Algorithms/HullSolver.hpp"
 #include "Algorithms/GrahamScan.hpp"
+#include "DataInput/RandomPointInput.hpp"
 
+#include "HullSolver.hpp"
 #include "HullState.hpp"
 #include "HullRenderer.hpp"
 #include "HullTimeline.hpp"
@@ -24,7 +25,8 @@ int main(int argc, char** argv) {
   HullRenderer* renderer = view.rootObject()->findChild<HullRenderer*>("renderer");
 
   GrahamScan algo;
-  HullSolver solver(algo);
+  RandomPointInput input(20);
+  HullSolver solver(algo, input);
 
   QObject::connect(&solver, SIGNAL(solutionFound(const HullTimeline&)),
                    renderer, SLOT(setTimeline(const HullTimeline&)));
@@ -32,6 +34,9 @@ int main(int argc, char** argv) {
   QObject* processButton = view.rootObject()->findChild<QObject*>("process_hull");
 
   QObject::connect(processButton, SIGNAL(clicked()), &solver, SLOT(calculate()));
+
+  QObject* loadButton = view.rootObject()->findChild<QObject*>("load_data");
+  QObject::connect(loadButton, SIGNAL(clicked()), &solver, SLOT(repollData()));
 
 
   return app.exec();
