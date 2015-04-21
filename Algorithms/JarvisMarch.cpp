@@ -38,6 +38,8 @@ HullTimeline JarvisMarch::getTimeline(const std::vector<QPoint>& nPts) {
         p = q;
     }while(p != left);
 
+    // Add line drawing here...
+
 }
 
 int JarvisMarch::ccw(const QPoint& p1, const QPoint& p2, const QPoint& p3) const {
