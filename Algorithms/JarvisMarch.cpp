@@ -7,17 +7,16 @@
 #include <cstdlib>
 
 HullTimeline JarvisMarch::getTimeline(const std::vector<QPoint>& nPts) {
-    // Update internal class level variables
-    pts = nPts;
-    stages = std::vector<HullState>();
 
-    stages.push_back(HullState(nPts, std::vector<QLine>()));
+    // Initialize the vector to hold the points
+    std::vector<QPoint> hull;
+    stages = std::vector<HullState>();
 
     // Must be at least 3 points
     if(nPts.size() < 3)
         return HullTimeline(stages);
 
-    //Find left most point
+    // Find left most point
     int left = 0;
     for(unsigned int i = 0; i < nPts.size(); ++i)
     {
@@ -26,7 +25,6 @@ HullTimeline JarvisMarch::getTimeline(const std::vector<QPoint>& nPts) {
     }
 
     int p = left, q;
-
     do
     {
         q = (p+1)%nPts.size();
@@ -34,11 +32,17 @@ HullTimeline JarvisMarch::getTimeline(const std::vector<QPoint>& nPts) {
             if(ccw(nPts[p], nPts[i], nPts[q]) == 2)
                 q = i;
 
-        pts.push_back(nPts[q]);
+        hull.push_back(nPts[q]);
         p = q;
     }while(p != left);
 
     // Add line drawing here...
+
+    // An issue with the drawing is that the left
+    // most point is inserted at the end of the hull vector
+    // the hull[0] is actually the second point on the convex hull
+    // found by the jarvis march. Not sure what to do? Or if it
+    // matters?
 
 }
 
