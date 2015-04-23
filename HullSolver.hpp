@@ -25,6 +25,9 @@ class HullSolver : public QObject {
   HullAlgorithm* algorithm = nullptr;
   DataInput* input = nullptr;
 
+  bool algorithmDiff = true;
+  bool inputDiff = true;
+
   std::vector<QPoint> inputPts;
   Optional<HullTimeline> timeline;
 public:

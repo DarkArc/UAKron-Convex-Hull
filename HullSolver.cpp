@@ -10,7 +10,18 @@ HullSolver::HullSolver(QObject* algorithmBox, std::unordered_map<std::string, Hu
 
 void HullSolver::calculate() {
   if (!inputPts.empty()) {
-    if (!timeline.hasVal()) {
+    if (!timeline.hasVal() || algorithmDiff) {
+      if (algorithmDiff) {
+        std::string str = algorithmBox->property("currentText").toString().toStdString();
+        auto entry = algorithms->find(str);
+        if (entry != algorithms->end()) {
+          algorithm = entry->second;
+          algorithmDiff = false;
+          emit algorithmChanged(QString(entry->first.c_str()));
+        } else {
+          emit error("Invalid algorithm specified!");
+        }
+      }
       timeline.setVal(algorithm->getTimeline(inputPts));
     }
     emit solutionFound(timeline.getVal());
@@ -20,37 +31,24 @@ void HullSolver::calculate() {
 }
 
 void HullSolver::repollData() {
-  if (algorithm == nullptr) {
-    repollAlgorithm();
+  if (inputDiff) {
+    auto entry = inputs->find("Random Input");
+    if (entry != inputs->end()) {
+      input = entry->second;
+      inputDiff = false;
+      emit inputChanged(QString(entry->first.c_str()));
+    } else {
+      emit error("Invalid input specified!");
+    }
   }
-
-  if (input == nullptr) {
-    repollInput();
-  }
-
   inputPts = input->getPoints();
+  timeline.clearVal();
 }
 
 void HullSolver::repollAlgorithm() {
-  qDebug() << "Polling";
-  std::string str = algorithmBox->property("currentText").toString().toStdString();
-  auto entry = algorithms->find(str);
-  qDebug() << str.c_str();
-  if (entry != algorithms->end()) {
-    algorithm = entry->second;
-    timeline.clearVal();
-    emit algorithmChanged(QString(entry->first.c_str()));
-  } else {
-    emit error("Invalid algorithm specified!");
-  }
+  algorithmDiff = true;
 }
 
 void HullSolver::repollInput() {
-  auto entry = inputs->find("Random Input");
-  if (entry != inputs->end()) {
-    input = entry->second;
-    emit inputChanged(QString(entry->first.c_str()));
-  } else {
-    emit error("Invalid input specified!");
-  }
+  inputDiff = true;
 }
