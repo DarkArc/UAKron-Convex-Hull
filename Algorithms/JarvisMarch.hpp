@@ -3,7 +3,6 @@
 
 #include <QPoint>
 
-#include <stack>   // Hold the convex hull points
 #include <vector>
 
 #include "../HullState.hpp"
@@ -11,19 +10,20 @@
 
 
 class JarvisMarch : public HullAlgorithm {
-        std::vector<QPoint> pts;
-        std::vector<HullState> stages;
-    public:
-        JarvisMarch();
-        virtual ~JarvisMarch();
+  std::vector<QPoint> pts;
+  std::vector<HullState> stages;
+public:
+  JarvisMarch();
+  virtual ~JarvisMarch();
 
-        virtual HullTimeline getTimeline(const std::vector<QPoint>&);
+  virtual HullTimeline getTimeline(const std::vector<QPoint>&);
 
-    private:
+private:
+  HullState captureSnapshot(const std::vector<QPoint>&) const;
+  HullState captureSnapshot(std::vector<QPoint>, const QPoint&) const;
 
-        /* Internal functions */
-        int ccw(const QPoint&, const QPoint&, const QPoint&) const;
+  /* Internal functions */
+  int ccw(const QPoint&, const QPoint&, const QPoint&) const;
 };
 
 #endif // JARVISMARCH
-

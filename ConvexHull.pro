@@ -4,6 +4,7 @@ CONFIG += qt debug
 CONFIG += c++11
 
 HEADERS += Algorithms/GrahamScan.hpp
+HEADERS += Algorithms/JarvisMarch.hpp
 HEADERS += DataInput/RandomPointInput.hpp
 HEADERS += Util/Optional.hpp
 HEADERS += DataInput.hpp
@@ -14,6 +15,7 @@ HEADERS += HullState.hpp
 HEADERS += HullTimeline.hpp
 
 SOURCES += Algorithms/GrahamScan.cpp
+SOURCES += Algorithms/JarvisMarch.cpp
 SOURCES += DataInput/RandomPointInput.cpp
 SOURCES += DataInput.cpp
 SOURCES += HullAlgorithm.cpp

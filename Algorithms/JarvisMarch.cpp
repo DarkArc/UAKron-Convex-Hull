@@ -1,55 +1,88 @@
 #include "JarvisMarch.hpp"
+
 #include <QLine>
 
-#include <algorithm>
-#include <stdexcept>
-#include <cstdio>
-#include <cstdlib>
+JarvisMarch::JarvisMarch() { }
+
+JarvisMarch::~JarvisMarch() { }
 
 HullTimeline JarvisMarch::getTimeline(const std::vector<QPoint>& nPts) {
+  // Update internal class level variables
+  pts = nPts;
+  stages = std::vector<HullState>();
 
-    // Initialize the vector to hold the points
-    std::vector<QPoint> hull;
-    stages = std::vector<HullState>();
+  stages.push_back(HullState(pts, std::vector<QLine>()));
 
-    // Must be at least 3 points
-    if(nPts.size() < 3)
-        return HullTimeline(stages);
+  // Must be at least 3 points
+  if (nPts.size() < 3) {
+    return HullTimeline(stages);
+  }
 
-    // Find left most point
-    int left = 0;
-    for(unsigned int i = 0; i < nPts.size(); ++i)
-    {
-        if(nPts[i].x() < nPts[left].x())
-            left = i;
+  // Find left most point
+  int left = 0;
+  for (unsigned int i = 0; i < nPts.size(); ++i) {
+    if (nPts[i].x() < nPts[left].x()) {
+      left = i;
+    }
+  }
+
+  // Initialize the vector to hold the points
+  std::vector<QPoint> hull;
+
+  // Setup the left value
+  int p = left;
+  hull.push_back(nPts[p]);
+
+  while (true) {
+    int q = (p + 1) % nPts.size();
+    for (unsigned int i = 0; i < nPts.size(); ++i) {
+      if (ccw(nPts[p], nPts[i], nPts[q]) == 1) {
+        q = i;
+      }
+      stages.push_back(captureSnapshot(hull, nPts[i]));
     }
 
-    int p = left, q;
-    do
-    {
-        q = (p+1)%nPts.size();
-        for(unsigned int i = 0; i < nPts.size(); ++i)
-            if(ccw(nPts[p], nPts[i], nPts[q]) == 2)
-                q = i;
+    p = q;
+    if (p == left) {
+      break;
+    }
 
-        hull.push_back(nPts[q]);
-        p = q;
-    }while(p != left);
+    hull.push_back(nPts[q]);
+    stages.push_back(captureSnapshot(hull));
+  }
 
-    // Add line drawing here...
+  // Finalize the hull by adding the connecting snapshot
+  HullState last = *stages.rbegin();
+  auto finalLines = last.getLines();
+  finalLines.erase(finalLines.end() - 1);
 
-    // An issue with the drawing is that the left
-    // most point is inserted at the end of the hull vector
-    // the hull[0] is actually the second point on the convex hull
-    // found by the jarvis march. Not sure what to do? Or if it
-    // matters?
+  finalLines.push_back(QLine(*hull.begin(), *hull.rbegin()));
 
+  stages.push_back(HullState(hull, finalLines));
+
+  return HullTimeline(stages);
+}
+
+HullState JarvisMarch::captureSnapshot(const std::vector<QPoint>& hullPts) const {
+
+  std::vector<QLine> lSnap;
+
+  for (unsigned int k = 0; k < hullPts.size() - 1; ++k) {
+    lSnap.push_back(QLine(hullPts[k], hullPts[k + 1]));
+  }
+
+  return HullState(pts, lSnap);
+}
+
+HullState JarvisMarch::captureSnapshot(std::vector<QPoint> hullPts, const QPoint& testPt) const {
+  hullPts.push_back(testPt);
+  return captureSnapshot(hullPts);
 }
 
 int JarvisMarch::ccw(const QPoint& p1, const QPoint& p2, const QPoint& p3) const {
-    int val = (p2.y() - p1.y()) * (p3.x() - p2.x()) -
-              (p2.x() - p1.x()) * (p3.y() - p2.y());
+  int val = (p2.y() - p1.y()) * (p3.x() - p2.x()) -
+            (p2.x() - p1.x()) * (p3.y() - p2.y());
 
-    if (val == 0) return 0;  // colinear
-    return (val > 0) ? 1 : 2; // clock or counterclock wise
+  if (val == 0) return 0;  // colinear
+  return (val > 0) ? 1 : 2; // clock or counterclock wise
 }

@@ -2,6 +2,7 @@
 #include <QtQuick/QQuickView>
 
 #include "Algorithms/GrahamScan.hpp"
+#include "Algorithms/JarvisMarch.hpp"
 #include "DataInput/RandomPointInput.hpp"
 
 #include "HullSolver.hpp"
@@ -25,8 +26,9 @@ int main(int argc, char** argv) {
   HullRenderer* renderer = view.rootObject()->findChild<HullRenderer*>("renderer");
 
   GrahamScan algo;
+  JarvisMarch algo2;
   RandomPointInput input(50);
-  HullSolver solver(algo, input);
+  HullSolver solver(algo2, input);
 
   QObject::connect(&solver, SIGNAL(solutionFound(const HullTimeline&)),
                    renderer, SLOT(setTimeline(const HullTimeline&)));
