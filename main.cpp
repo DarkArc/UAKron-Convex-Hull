@@ -1,3 +1,6 @@
+#include <string>
+#include <unordered_map>
+
 #include <QGuiApplication>
 #include <QtQuick/QQuickView>
 
@@ -25,10 +28,26 @@ int main(int argc, char** argv) {
 
   HullRenderer* renderer = view.rootObject()->findChild<HullRenderer*>("renderer");
 
-  GrahamScan algo;
-  JarvisMarch algo2;
-  RandomPointInput input(50);
-  HullSolver solver(algo2, input);
+  QObject* algorithmBox = view.rootObject()->findChild<QObject*>("algorithm_box");
+  QObject* inputBox = view.rootObject()->findChild<QObject*>("input_box");
+
+  GrahamScan grahamScan;
+  JarvisMarch jarvisMarch;
+
+  RandomPointInput randomPointInput(50);
+
+  std::unordered_map<std::string, HullAlgorithm*> algorithms({
+    {"Graham Scan", &grahamScan},
+    {"Jarvis March", &jarvisMarch}
+  });
+  std::unordered_map<std::string, DataInput*> inputs({
+    {"Random Input", &randomPointInput}
+  });
+
+  HullSolver solver(algorithmBox, algorithms, inputBox, inputs);
+
+  QObject::connect(algorithmBox, SIGNAL(activated(int)),
+                   &solver, SLOT(repollAlgorithm()));
 
   QObject::connect(&solver, SIGNAL(solutionFound(const HullTimeline&)),
                    renderer, SLOT(setTimeline(const HullTimeline&)));

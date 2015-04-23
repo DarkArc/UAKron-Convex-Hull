@@ -35,9 +35,13 @@ ColumnLayout {
       }
 
       ComboBox {
+        objectName: "algorithm_box"
         Layout.preferredWidth: 280
         Layout.alignment: Qt.AlignHCenter
-        model: [ "Gram Scan" ]
+        model: ListModel {
+            ListElement { text: "Graham Scan" }
+            ListElement { text: "Jarvis March" }
+        }
       }
     }
 
