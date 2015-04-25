@@ -4,25 +4,14 @@
 #include <QDebug>
 #include <QMetaProperty>
 
-HullSolver::HullSolver(QObject* algorithmBox, std::unordered_map<std::string, HullAlgorithm*>& algorithms,
-                       QObject* inputBox, std::unordered_map<std::string, DataInput*>& inputs
-                     ) : algorithmBox(algorithmBox), inputBox(inputBox), algorithms(&algorithms), inputs(&inputs) { }
+HullSolver::HullSolver(QMap<QString, HullAlgorithm*>& algorithms,
+                       QMap<QString, DataInput*>& inputs
+                     ) : algorithms(&algorithms), inputs(&inputs) { }
 
 void HullSolver::calculate() {
   if (!inputPts.empty()) {
-    if (!timeline.hasVal() || algorithmDiff) {
-      if (algorithmDiff) {
-        std::string str = algorithmBox->property("currentText").toString().toStdString();
-        auto entry = algorithms->find(str);
-        if (entry != algorithms->end()) {
-          algorithm = entry->second;
-          algorithmDiff = false;
-          emit algorithmChanged(QString(entry->first.c_str()));
-        } else {
-          emit error("Invalid algorithm specified!");
-        }
-      }
-      timeline.setVal(algorithm->getTimeline(inputPts));
+    if (!timeline.hasVal()) {
+      timeline.setVal(m_algorithm->getTimeline(inputPts));
     }
     emit solutionFound(timeline.getVal());
   } else {
@@ -31,24 +20,40 @@ void HullSolver::calculate() {
 }
 
 void HullSolver::repollData() {
-  if (inputDiff) {
-    auto entry = inputs->find("Random Input");
-    if (entry != inputs->end()) {
-      input = entry->second;
-      inputDiff = false;
-      emit inputChanged(QString(entry->first.c_str()));
-    } else {
-      emit error("Invalid input specified!");
-    }
+  if (m_input == nullptr) {
+    emit error("No input system!");
+    return;
   }
-  inputPts = input->getPoints();
+
+  inputPts = m_input->getPoints();
   timeline.clearVal();
 }
 
-void HullSolver::repollAlgorithm() {
-  algorithmDiff = true;
+QString HullSolver::algorithm() const {
+  return m_algorithm == nullptr ? "null" : m_algorithm->name();
 }
 
-void HullSolver::repollInput() {
-  inputDiff = true;
+void HullSolver::setAlgorithm(const QString& str) {
+  auto entry = algorithms->find(str);
+  if (entry != algorithms->end()) {
+    m_algorithm = entry.value();
+    timeline.clearVal();
+    emit algorithmChanged(entry.key());
+  } else {
+    emit error("Invalid algorithm specified!");
+  }
+}
+
+QString HullSolver::input() const {
+  return m_input == nullptr ? "null" : m_input->name();
+}
+
+void HullSolver::setInput(const QString& str) {
+  auto entry = inputs->find(str);
+  if (entry != inputs->end()) {
+    m_input = entry.value();
+    emit inputChanged(entry.key());
+  } else {
+    emit error("Invalid input specified!");
+  }
 }

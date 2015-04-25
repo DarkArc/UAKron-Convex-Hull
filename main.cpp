@@ -1,6 +1,5 @@
-#include <string>
-#include <unordered_map>
-
+#include <QMap>
+#include <QString>
 #include <QGuiApplication>
 #include <QtQuick/QQuickView>
 
@@ -15,50 +14,40 @@
 
 int main(int argc, char** argv) {
 
-  srand(time(NULL));
-
   QGuiApplication app(argc, argv);
 
   qmlRegisterType<HullRenderer>("com.nearce.HullRenderer", 1, 0, "HullRenderer");
 
   QQuickView view;
+
+  // Algorithm setup
+  GrahamScan grahamScan;
+  JarvisMarch jarvisMarch;
+
+  // Input setup
+  RandomPointInput randomPointInput(50, false);
+
+  QMap<QString, HullAlgorithm*> algorithms({
+    {grahamScan.name(), &grahamScan},
+    {jarvisMarch.name(), &jarvisMarch}
+  });
+  QMap<QString, DataInput*> inputs({
+    {randomPointInput.name(), &randomPointInput}
+  });
+
+  HullSolver solver(algorithms, inputs);
+
+  view.engine()->rootContext()->setContextProperty("hull_solver", &solver);
+
   view.setResizeMode(QQuickView::SizeRootObjectToView);
   view.setSource(QUrl("qrc:///resources/main.qml"));
   view.showMaximized();
 
   HullRenderer* renderer = view.rootObject()->findChild<HullRenderer*>("renderer");
 
-  QObject* algorithmBox = view.rootObject()->findChild<QObject*>("algorithm_box");
-  QObject* inputBox = view.rootObject()->findChild<QObject*>("input_box");
-
-  GrahamScan grahamScan;
-  JarvisMarch jarvisMarch;
-
-  RandomPointInput randomPointInput(50);
-
-  std::unordered_map<std::string, HullAlgorithm*> algorithms({
-    {"Graham Scan", &grahamScan},
-    {"Jarvis March", &jarvisMarch}
-  });
-  std::unordered_map<std::string, DataInput*> inputs({
-    {"Random Input", &randomPointInput}
-  });
-
-  HullSolver solver(algorithmBox, algorithms, inputBox, inputs);
-
-  QObject::connect(algorithmBox, SIGNAL(activated(int)),
-                   &solver, SLOT(repollAlgorithm()));
-
+  // C++ Program Logic
   QObject::connect(&solver, SIGNAL(solutionFound(const HullTimeline&)),
                    renderer, SLOT(setTimeline(const HullTimeline&)));
-
-  QObject* processButton = view.rootObject()->findChild<QObject*>("process_hull");
-
-  QObject::connect(processButton, SIGNAL(clicked()), &solver, SLOT(calculate()));
-
-  QObject* loadButton = view.rootObject()->findChild<QObject*>("load_data");
-  QObject::connect(loadButton, SIGNAL(clicked()), &solver, SLOT(repollData()));
-
 
   return app.exec();
 }

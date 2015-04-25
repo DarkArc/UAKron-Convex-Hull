@@ -5,9 +5,12 @@
 
 class RandomPointInput : public DataInput {
   unsigned int pointCount;
+  bool circle;
 public:
-  RandomPointInput(unsigned int);
+  RandomPointInput(unsigned int, bool);
   virtual ~RandomPointInput();
+
+  virtual QString name() const;
 
   virtual std::vector<QPoint> getPoints();
 };

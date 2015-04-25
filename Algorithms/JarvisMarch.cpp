@@ -6,6 +6,10 @@ JarvisMarch::JarvisMarch() { }
 
 JarvisMarch::~JarvisMarch() { }
 
+QString JarvisMarch::name() const {
+  return "Jarvis March";
+}
+
 HullTimeline JarvisMarch::getTimeline(const std::vector<QPoint>& nPts) {
   // Update internal class level variables
   pts = nPts;

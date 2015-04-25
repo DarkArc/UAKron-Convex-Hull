@@ -35,6 +35,7 @@ ColumnLayout {
       }
 
       ComboBox {
+        id: algorithm_box
         objectName: "algorithm_box"
         Layout.preferredWidth: 280
         Layout.alignment: Qt.AlignHCenter
@@ -91,6 +92,12 @@ ColumnLayout {
           Layout.alignment: Qt.AlignHCenter
 
           text: "Process Hull"
+
+          onClicked: {
+            hull_solver.algorithm = algorithm_box.currentText;
+            hull_solver.calculate();
+          }
+
         }
 
         Button {
@@ -98,6 +105,11 @@ ColumnLayout {
           Layout.alignment: Qt.AlignHCenter
 
           text: "Load Dataset"
+
+          onClicked: {
+            hull_solver.input = "Random Point";
+            hull_solver.repollData();
+          }
         }
 
         Button {

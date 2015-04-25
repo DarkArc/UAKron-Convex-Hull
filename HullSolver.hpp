@@ -1,10 +1,10 @@
 #ifndef HULLSOLVER_HPP
 #define HULLSOLVER_HPP
 
+#include <QMap>
 #include <QObject>
 #include <QString>
 
-#include <string>
 #include <vector>
 #include <unordered_map>
 
@@ -16,28 +16,29 @@
 class HullSolver : public QObject {
   Q_OBJECT
 
-  QObject* algorithmBox;
-  QObject* inputBox;
+  Q_PROPERTY(QString algorithm READ algorithm WRITE setAlgorithm NOTIFY algorithmChanged);
+  Q_PROPERTY(QString input READ input WRITE setInput NOTIFY inputChanged);
 
-  std::unordered_map<std::string, HullAlgorithm*>* algorithms;
-  std::unordered_map<std::string, DataInput*>* inputs;
+  QMap<QString, HullAlgorithm*>* algorithms;
+  QMap<QString, DataInput*>* inputs;
 
-  HullAlgorithm* algorithm = nullptr;
-  DataInput* input = nullptr;
-
-  bool algorithmDiff = true;
-  bool inputDiff = true;
+  HullAlgorithm* m_algorithm = nullptr;
+  DataInput* m_input = nullptr;
 
   std::vector<QPoint> inputPts;
   Optional<HullTimeline> timeline;
 public:
-  HullSolver(QObject*, std::unordered_map<std::string, HullAlgorithm*>&, QObject*, std::unordered_map<std::string, DataInput*>&);
+  HullSolver(QMap<QString, HullAlgorithm*>&, QMap<QString, DataInput*>&);
+
+  QString algorithm() const;
+  void setAlgorithm(const QString&);
+
+  QString input() const;
+  void setInput(const QString&);
 
 public slots:
   void calculate();
   void repollData();
-  void repollAlgorithm();
-  void repollInput();
 
 signals:
   void error(const QString&) const;

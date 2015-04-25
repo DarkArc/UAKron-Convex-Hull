@@ -11,6 +11,10 @@ GrahamScan::GrahamScan() { }
 
 GrahamScan::~GrahamScan() { }
 
+QString GrahamScan::name() const {
+  return "Graham Scan";
+}
+
 //======================================================================
 /*
     Pre:
