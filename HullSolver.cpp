@@ -52,6 +52,7 @@ void HullSolver::setInput(const QString& str) {
   auto entry = inputs->find(str);
   if (entry != inputs->end()) {
     m_input = entry.value();
+    inputPts.clear();
     emit inputChanged(entry.key());
   } else {
     emit error("Invalid input specified!");
