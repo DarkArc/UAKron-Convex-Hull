@@ -18,9 +18,11 @@ HullTimeline JarvisMarch::getTimeline(const std::vector<QPoint>& nPts) {
   // Update internal class level variables
   pts = nPts;
   stages = std::vector<HullState>();
+  timeTrackInit();
 
   stages.push_back(HullState(pts, std::vector<QLine>()));
 
+  timeTrackUpdate();
   // Must be at least 3 points
   if (nPts.size() < 3) {
     return HullTimeline(stages);
@@ -47,7 +49,9 @@ HullTimeline JarvisMarch::getTimeline(const std::vector<QPoint>& nPts) {
       if (ccw(nPts[p], nPts[i], nPts[q]) == 1) {
         q = i;
       }
+      timeTrackRecord();
       stages.push_back(captureSnapshot(hull, nPts[i]));
+      timeTrackUpdate();
     }
 
     p = q;
@@ -56,7 +60,9 @@ HullTimeline JarvisMarch::getTimeline(const std::vector<QPoint>& nPts) {
     }
 
     hull.push_back(nPts[q]);
+    timeTrackRecord();
     stages.push_back(captureSnapshot(hull));
+    timeTrackUpdate();
   }
 
   // Finalize the hull by adding the connecting snapshot

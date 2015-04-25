@@ -37,8 +37,11 @@ HullTimeline GrahamScan::getTimeline(const std::vector<QPoint>& nPts) {
   // Update internal class level variables
   pts = nPts;
   stages = std::vector<HullState>();
+  timeTrackInit();
 
   stages.push_back(HullState(nPts, std::vector<QLine>()));
+
+  timeTrackUpdate();
 
   // Make the initial point the lowest Y
   std::swap(pts[0], findSmallestYPoint(pts));
@@ -46,20 +49,28 @@ HullTimeline GrahamScan::getTimeline(const std::vector<QPoint>& nPts) {
   // Sort the points
   std::sort(pts.begin() + 1, pts.end(), *this);
 
+  timeTrackRecord();
+
   // Create the hull's stack
   std::stack<QPoint> hullStack;
   for (unsigned int i = 0; i < 3; ++ i) {
     hullStack.push(pts[i]);
+    timeTrackRecord();
     stages.push_back(captureSnapShot(hullStack, i));
+    timeTrackUpdate();
   }
 
   for (unsigned int i = 3; i < pts.size(); ++i) {
     while (ccw(secondToTop(hullStack), hullStack.top(), pts[i]) != 2) {
       hullStack.pop();
+      timeTrackRecord();
       stages.push_back(captureSnapShot(hullStack, i));
+      timeTrackUpdate();
     }
     hullStack.push(pts[i]);
+    timeTrackRecord();
     stages.push_back(captureSnapShot(hullStack, i));
+    timeTrackUpdate();
   }
 
   // Finalize the hull by adding the connecting snapshot
