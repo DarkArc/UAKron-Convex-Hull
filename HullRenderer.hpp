@@ -16,9 +16,15 @@ public:
 
   bool hasHull() const;
 
+  Q_INVOKABLE int curPosition() const;
+  Q_INVOKABLE int maxPosition() const;
+
 public slots:
   void setTimeline(const HullTimeline&);
   void advance();
+
+signals:
+  void stageComplete() const;
 
 private:
   QPointF adjustPoint(const QPoint&) const;

@@ -12,8 +12,20 @@ void HullSolver::calculate() {
   if (!inputPts.empty()) {
     if (!timeline.hasVal()) {
       timeline.setVal(m_algorithm->getTimeline(inputPts));
+      auto events = timeline.getVal().getEvents();
+      auto points = events[0].getPoints();
+      auto pointsFinal = events[events.size() - 1].getPoints();
+
+      emit solutionFound(timeline.getVal());
+      emit solutionFound(m_algorithm->name(), points.size(), m_algorithm->getTime());
+
+      for (auto& point :points) {
+        emit origPointDiscovered(point.x(), point.y());
+      }
+      for (auto& point :pointsFinal) {
+        emit hullPointFound(point.x(), point.y());
+      }
     }
-    emit solutionFound(timeline.getVal());
   } else {
     emit error("Empty data set!");
   }

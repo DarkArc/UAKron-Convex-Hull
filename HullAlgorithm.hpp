@@ -10,6 +10,7 @@ public:
   virtual ~HullAlgorithm();
 
   virtual QString name() const = 0;
+  virtual int getTime() const = 0;
 
   virtual HullTimeline getTimeline(const std::vector<QPoint>&) = 0;
 };

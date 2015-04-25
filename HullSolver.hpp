@@ -42,7 +42,13 @@ public slots:
 
 signals:
   void error(const QString&) const;
+
+  void origPointDiscovered(const int& x, const int& y) const;
+  void hullPointFound(const int& x, const int& y) const;
+
   void solutionFound(const HullTimeline&) const;
+  void solutionFound(const QString& a, const int& b, const int& c) const;
+
   void algorithmChanged(const QString&) const;
   void inputChanged(const QString&) const;
 };

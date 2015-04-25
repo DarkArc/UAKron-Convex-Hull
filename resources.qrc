@@ -1,5 +1,8 @@
 <RCC>
   <qresource>
     <file>resources/main.qml</file>
+    <file>resources/Data_View.qml</file>
+    <file>resources/Input_Method.qml</file>
+    <file>resources/Renderer.qml</file>
   </qresource>
 </RCC>

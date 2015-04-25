@@ -30,10 +30,20 @@ void HullRenderer::paint(QPainter *painter) {
     auto&& end = adjustPoint(line.p2());
     painter->drawLine(start, end);
   }
+
+  emit stageComplete();
 }
 
 bool HullRenderer::hasHull() const {
   return timeline.getEventCount() > 0;
+}
+
+int HullRenderer::curPosition() const {
+  return position + 1;
+}
+
+int HullRenderer::maxPosition() const {
+  return timeline.getEventCount();
 }
 
 void HullRenderer::setTimeline(const HullTimeline& timeline) {
@@ -43,7 +53,7 @@ void HullRenderer::setTimeline(const HullTimeline& timeline) {
 }
 
 void HullRenderer::advance() {
-  if (position < timeline.getEventCount() - 1) {
+  if (curPosition() < maxPosition()) {
     ++position;
     update();
   }

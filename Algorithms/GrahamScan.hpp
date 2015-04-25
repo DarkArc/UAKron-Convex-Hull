@@ -29,6 +29,7 @@ public:
   virtual ~GrahamScan();
 
   virtual QString name() const;
+  virtual int getTime() const;
   virtual HullTimeline getTimeline(const std::vector<QPoint>&);
 private:
   HullState captureSnapShot(std::stack<QPoint>, const unsigned int&) const;
