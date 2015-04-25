@@ -25,7 +25,7 @@ int main(int argc, char** argv) {
   JarvisMarch jarvisMarch;
 
   // Input setup
-  RandomPointInput randomPointInput(50, false);
+  RandomPointInput randomPointInput(1000, false);
 
   QMap<QString, HullAlgorithm*> algorithms({
     {grahamScan.name(), &grahamScan},

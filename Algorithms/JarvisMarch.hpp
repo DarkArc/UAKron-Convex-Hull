@@ -17,7 +17,6 @@ public:
   virtual ~JarvisMarch();
 
   virtual QString name() const;
-  virtual int getTime() const;
   virtual HullTimeline getTimeline(const std::vector<QPoint>&);
 
 private:

@@ -15,10 +15,6 @@ QString GrahamScan::name() const {
   return "Graham Scan";
 }
 
-int GrahamScan::getTime() const {
-  return 0;
-}
-
 //======================================================================
 /*
     Pre:

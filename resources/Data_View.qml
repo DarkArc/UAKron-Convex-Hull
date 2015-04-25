@@ -46,34 +46,10 @@ SplitView {
   SplitView {
     ListModel {
         id: orig_points
-        ListElement {
-            x: 234
-            y: 123
-        }
-        ListElement {
-            x: 123
-            y: 32
-        }
-        ListElement {
-            x: 23
-            y: 354
-        }
     }
 
     ListModel {
         id: hull_points
-        ListElement {
-            x: 234
-            y: 123
-        }
-        ListElement {
-            x: 123
-            y: 32
-        }
-        ListElement {
-            x: 23
-            y: 354
-        }
     }
 
     ColumnLayout {

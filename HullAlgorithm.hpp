@@ -8,14 +8,14 @@
 #include "HullTimeline.hpp"
 
 class HullAlgorithm {
-  int elapsedTime;
-  std::chrono::time_point<std::chrono::system_clock> last;
+  double elapsedTime;
+  std::chrono::time_point<std::chrono::high_resolution_clock> last;
 public:
   virtual ~HullAlgorithm();
 
   virtual QString name() const = 0;
 
-  int getTime() const;
+  double getTime() const;
   void timeTrackInit();
   void timeTrackUpdate();
   void timeTrackRecord();
