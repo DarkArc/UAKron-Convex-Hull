@@ -137,7 +137,7 @@ SplitView {
       }
       TableViewColumn {
         role: "time"
-        title: "Ellapsed Time"
+        title: "Ellapsed Time (microseconds)"
         width: 1000
       }
       model: timings

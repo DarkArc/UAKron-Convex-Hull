@@ -16,7 +16,7 @@ void HullAlgorithm::timeTrackUpdate() {
 }
 
 void HullAlgorithm::timeTrackRecord() {
-  std::chrono::duration<double> timeFragment = std::chrono::high_resolution_clock::now() - last;
+  std::chrono::duration<double, std::micro> timeFragment(std::chrono::high_resolution_clock::now() - last);
   elapsedTime += timeFragment.count();
   last = std::chrono::high_resolution_clock::now();
 }
