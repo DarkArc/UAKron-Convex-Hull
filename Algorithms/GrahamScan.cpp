@@ -59,7 +59,7 @@ HullTimeline GrahamScan::getTimeline(const std::vector<QPoint>& nPts) {
   }
 
   for (unsigned int i = 3; i < pts.size(); ++i) {
-    while (ccw(secondToTop(hullStack), hullStack.top(), pts[i]) == 1) {
+    while (ccw(secondToTop(hullStack), hullStack.top(), pts[i]) != 2) {
       hullStack.pop();
       timeTrackRecord();
       stages.push_back(captureSnapShot(hullStack, i));
@@ -194,5 +194,10 @@ int GrahamScan::sqrDist(const QPoint& p1, const QPoint& p2) const {
 */
 bool GrahamScan::operator () (const QPoint& p1, const QPoint& p2) const {
    // Find orientation
-   return ccw(pts[0], p1, p2) == 2;
+   int o = ccw(pts[0], p1, p2);
+   if (o == 0) {
+     return sqrDist(pts[0], p2) >= sqrDist(pts[0], p1);
+   }
+
+   return o == 2;
 }

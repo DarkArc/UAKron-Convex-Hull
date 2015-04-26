@@ -47,7 +47,7 @@ HullTimeline JarvisMarch::getTimeline(const std::vector<QPoint>& nPts) {
     int q = (p + 1) % nPts.size();
     auto lastClean = *stages.rbegin();
     for (unsigned int i = 0; i < nPts.size(); ++i) {
-      if (ccw(nPts[p], nPts[i], nPts[q]) == 1) {
+      if (ccw(nPts[p], nPts[i], nPts[q]) == 2) {
         q = i;
       }
       timeTrackRecord();
