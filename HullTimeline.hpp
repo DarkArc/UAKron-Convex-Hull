@@ -9,11 +9,13 @@
 
 class HullTimeline {
   std::vector<HullState> events;
+  QPoint min;
   QPoint max;
 public:
   HullTimeline();
   HullTimeline(const std::vector<HullState>&);
 
+  QPoint getMin() const;
   QPoint getMax() const;
 
   std::vector<HullState> getEvents() const;

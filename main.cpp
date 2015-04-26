@@ -5,6 +5,7 @@
 
 #include "Algorithms/GrahamScan.hpp"
 #include "Algorithms/JarvisMarch.hpp"
+#include "DataInput/CircularPointInput.hpp"
 #include "DataInput/RandomPointInput.hpp"
 
 #include "HullSolver.hpp"
@@ -25,18 +26,22 @@ int main(int argc, char** argv) {
   JarvisMarch jarvisMarch;
 
   // Input setup
-  RandomPointInput randomPointInput(1000, false);
+  RandomPointInput randomPointInput(50, 1000);
+  CircularPointInput circularPointInput(50, 1000);
 
   QMap<QString, HullAlgorithm*> algorithms({
     {grahamScan.name(), &grahamScan},
     {jarvisMarch.name(), &jarvisMarch}
   });
   QMap<QString, DataInput*> inputs({
-    {randomPointInput.name(), &randomPointInput}
+    {randomPointInput.name(), &randomPointInput},
+    {circularPointInput.name(), &circularPointInput}
   });
 
   HullSolver solver(algorithms, inputs);
 
+  view.engine()->rootContext()->setContextProperty("random_input", &randomPointInput);
+  view.engine()->rootContext()->setContextProperty("circular_input", &circularPointInput);
   view.engine()->rootContext()->setContextProperty("hull_solver", &solver);
 
   view.setResizeMode(QQuickView::SizeRootObjectToView);

@@ -8,30 +8,67 @@ ColumnLayout {
 
   RowLayout {
     Label {
+      text: "Number of Points:"
+    }
+
+    SpinBox {
+      id: rand_point_count
+      value: random_input.pointCount
+      maximumValue: 1000
+    }
+
+    Label {
       text: "Max Point:"
     }
 
     SpinBox {
-        id: max_points
+      id: max_point
+      value: random_input.maxPoint
+      maximumValue: 1000
+    }
+
+    Button {
+      text: "Load Random Dataset"
+
+      onClicked: {
+        random_input.pointCount = rand_point_count.value;
+        random_input.maxPoint = max_point.value;
+
+        hull_solver.input = "Random Point";
+        hull_solver.repollData();
+      }
     }
   }
 
   RowLayout {
     Label {
-      text: "Number of Points:"
+      text: "Number of Segments:"
     }
 
     SpinBox {
-        id: point_count
+      id: circ_point_count
+      value: circular_input.pointCount
+      maximumValue: 1000
     }
-  }
 
-  RowLayout {
+    Label {
+      text: "Radius:"
+    }
+
+    SpinBox {
+      id: radius
+      value: circular_input.radius
+      maximumValue: 1000
+    }
+
     Button {
       text: "Load Random Dataset"
 
       onClicked: {
-        hull_solver.input = "Random Point";
+        circular_input.pointCount = circ_point_count.value;
+        circular_input.radius = radius.value;
+
+        hull_solver.input = "Circular Point";
         hull_solver.repollData();
       }
     }

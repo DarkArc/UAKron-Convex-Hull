@@ -60,10 +60,13 @@ void HullRenderer::advance() {
 }
 
 QPointF HullRenderer::adjustPoint(const QPoint& point) const {
+  QPoint min = timeline.getMin();
   QPoint max = timeline.getMax();
+  max.setX(max.x() - min.x());
+  max.setY(max.y() - min.y());
 
-  double ratioX = point.x() / static_cast<double>(max.x());
-  double ratioY = (max.y() - point.y()) / static_cast<double>(max.y());
+  double ratioX = (point.x() - min.x()) / static_cast<double>(max.x());
+  double ratioY = (max.y() - (point.y() - min.y())) / static_cast<double>(max.y());
 
   auto boundingRec = contentsBoundingRect();
   return QPointF(((boundingRec.width() - 20) * ratioX) + 10, ((boundingRec.height() - 20) * ratioY) + 10);
