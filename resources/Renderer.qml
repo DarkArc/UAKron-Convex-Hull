@@ -77,9 +77,9 @@ ColumnLayout {
       id: speed_slider
       activeFocusOnPress: true
       updateValueWhileDragging: true
-      minimumValue: .01
+      minimumValue: .005
       maximumValue: 1
-      value: .5
+      value: .8
 
       style: SliderStyle {
         groove: Rectangle {
