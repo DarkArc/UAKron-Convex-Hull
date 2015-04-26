@@ -30,6 +30,8 @@ void HullSolver::calculate() {
       for (auto& point :hullPoints) {
         emit hullPointFound(point.x(), point.y());
       }
+    } else {
+      emit solutionFound(timeline.getVal());
     }
   } else {
     emit error("Empty data set!");
@@ -53,9 +55,11 @@ QString HullSolver::algorithm() const {
 void HullSolver::setAlgorithm(const QString& str) {
   auto entry = algorithms->find(str);
   if (entry != algorithms->end()) {
-    m_algorithm = entry.value();
-    timeline.clearVal();
-    emit algorithmChanged(entry.key());
+    if (entry.value() != m_algorithm) {
+      m_algorithm = entry.value();
+      timeline.clearVal();
+      emit algorithmChanged(entry.key());
+    }
   } else {
     emit error("Invalid algorithm specified!");
   }
@@ -68,9 +72,11 @@ QString HullSolver::input() const {
 void HullSolver::setInput(const QString& str) {
   auto entry = inputs->find(str);
   if (entry != inputs->end()) {
-    m_input = entry.value();
-    inputPts.clear();
-    emit inputChanged(entry.key());
+    if (entry.value() != m_input) {
+      m_input = entry.value();
+      inputPts.clear();
+      emit inputChanged(entry.key());
+    }
   } else {
     emit error("Invalid input specified!");
   }

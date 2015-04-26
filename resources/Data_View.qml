@@ -133,7 +133,7 @@ SplitView {
       TableViewColumn {
         role: "hullPoints"
         title: "Hull Point Count"
-        width: 100
+        width: 125
       }
       TableViewColumn {
         role: "time"
