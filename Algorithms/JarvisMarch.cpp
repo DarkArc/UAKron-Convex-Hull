@@ -1,6 +1,7 @@
 #include "JarvisMarch.hpp"
 
 #include <QLine>
+#include <QDebug>
 
 JarvisMarch::JarvisMarch() { }
 
@@ -65,8 +66,7 @@ HullTimeline JarvisMarch::getTimeline(const std::vector<QPoint>& nPts) {
   HullState last = *stages.rbegin();
   auto finalLines = last.getLines();
   finalLines.erase(finalLines.end() - 1);
-
-  finalLines.push_back(QLine(*hull.begin(), *hull.rbegin()));
+  finalLines.emplace_back(*hull.begin(), *hull.rbegin());
 
   stages.push_back(HullState(hull, finalLines));
 
