@@ -1,5 +1,7 @@
 QT += qml quick
 
+QMAKE_CXXFLAGS += -O2
+
 CONFIG += qt debug
 CONFIG += c++11
 

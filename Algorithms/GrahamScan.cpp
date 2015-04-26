@@ -90,6 +90,10 @@ std::shared_ptr<HullState> GrahamScan::captureSnapShot(std::stack<QPoint> hullSt
   std::vector<QPoint> pSnap;
   std::vector<QLine> lSnap;
 
+  // Reserve memory
+  pSnap.reserve(hullStack.size());
+  lSnap.reserve(hullStack.size() - 1);
+
   while (!hullStack.empty()) {
     pSnap.push_back(hullStack.top());
     hullStack.pop();

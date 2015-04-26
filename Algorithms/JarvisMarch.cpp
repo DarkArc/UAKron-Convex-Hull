@@ -62,7 +62,7 @@ HullTimeline JarvisMarch::getTimeline(const std::vector<QPoint>& nPts) {
 
     hull.push_back(nPts[q]);
     timeTrackRecord();
-    stages.push_back(captureSnapshot(hull));
+    stages.push_back(captureSnapshot(lastClean, hull, nPts[q]));
     timeTrackUpdate();
   }
 
@@ -80,6 +80,9 @@ HullTimeline JarvisMarch::getTimeline(const std::vector<QPoint>& nPts) {
 std::shared_ptr<HullState> JarvisMarch::captureSnapshot(const std::vector<QPoint>& hullPts) const {
 
   std::vector<QLine> lSnap;
+
+  // Reserve memory
+  lSnap.reserve(hullPts.size() - 1);
 
   for (unsigned int k = 0; k < hullPts.size() - 1; ++k) {
     lSnap.emplace_back(hullPts[k], hullPts[k + 1]);
