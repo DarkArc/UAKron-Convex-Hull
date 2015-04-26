@@ -1,6 +1,7 @@
 #include "GrahamScan.hpp"
 
 #include <QLine>
+#include <QDebug>
 
 #include <algorithm>
 #include <stdexcept>
@@ -127,7 +128,7 @@ QPoint& GrahamScan::findSmallestYPoint(std::vector<QPoint>& pts) const {
     // Iterate over all the point to find the smallest y value
     for (unsigned int i = 1; i < pts.size(); ++i) {
        int y = pts[i].y();
-       if ((y < minY || (minY == y && pts[i].x() < pts[minIndex].x()))) {
+       if ((y < minY || (minY == y && pts[i].x() >= pts[minIndex].x()))) {
          minY = pts[i].y();
          minIndex = i;
        }
