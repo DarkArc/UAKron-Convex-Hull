@@ -9,7 +9,6 @@
 #include "DataInput/RandomPointInput.hpp"
 
 #include "HullSolver.hpp"
-#include "HullState.hpp"
 #include "HullRenderer.hpp"
 #include "HullTimeline.hpp"
 

@@ -7,6 +7,8 @@
 #include <cstdio>
 #include <cstdlib>
 
+#include "../HullState/StandaloneHullState.hpp"
+
 GrahamScan::GrahamScan() { }
 
 GrahamScan::~GrahamScan() { }
@@ -32,10 +34,10 @@ QString GrahamScan::name() const {
 HullTimeline GrahamScan::getTimeline(const std::vector<QPoint>& nPts) {
   // Update internal class level variables
   pts = nPts;
-  stages = std::vector<HullState>();
+  stages = std::vector<HullState*>();
   timeTrackInit();
 
-  stages.push_back(HullState(nPts, std::vector<QLine>()));
+  stages.push_back(new StandaloneHullState(nPts, std::vector<QLine>()));
 
   timeTrackUpdate();
 
@@ -70,18 +72,18 @@ HullTimeline GrahamScan::getTimeline(const std::vector<QPoint>& nPts) {
   }
 
   // Finalize the hull by adding the connecting snapshot
-  HullState last = *stages.rbegin();
-  auto finalPoints = last.getPoints();
-  auto finalLines = last.getLines();
+  HullState* last = *stages.rbegin();
+  auto finalPoints = last->getPoints();
+  auto finalLines = last->getLines();
 
-  finalLines.push_back(QLine(*finalPoints.begin(), *finalPoints.rbegin()));
+  finalLines.emplace_back(*finalPoints.begin(), *finalPoints.rbegin());
 
-  stages.push_back(HullState(finalPoints, finalLines));
+  stages.push_back(new StandaloneHullState(finalPoints, finalLines));
 
   return HullTimeline(stages);
 }
 
-HullState GrahamScan::captureSnapShot(std::stack<QPoint> hullStack,
+HullState* GrahamScan::captureSnapShot(std::stack<QPoint> hullStack,
     const unsigned int& iteration) const {
 
   std::vector<QPoint> pSnap;
@@ -93,7 +95,7 @@ HullState GrahamScan::captureSnapShot(std::stack<QPoint> hullStack,
   }
 
   for (unsigned int k = 0; k < pSnap.size() - 1; ++k) {
-    lSnap.push_back(QLine(pSnap[k], pSnap[k + 1]));
+    lSnap.emplace_back(pSnap[k], pSnap[k + 1]);
   }
 
   if (iteration != pts.size() - 1) {
@@ -102,7 +104,7 @@ HullState GrahamScan::captureSnapShot(std::stack<QPoint> hullStack,
     }
   }
 
-  return HullState(pSnap, lSnap);
+  return new StandaloneHullState(pSnap, lSnap);
 }
 
 /* Function Definitions */

@@ -15,17 +15,17 @@ void HullRenderer::paint(QPainter *painter) {
   QPen pointPen(QBrush(Qt::blue), 10, Qt::SolidLine, Qt::RoundCap);
   QPen linePen(QBrush(Qt::black), 4, Qt::SolidLine, Qt::RoundCap);
 
-  HullState state = timeline.getEvents()[position];
+  HullState* state = timeline.getEvents()[position];
 
   // Draw Points
   painter->setPen(pointPen);
-  for (auto& point : state.getPoints()) {
+  for (auto& point : state->getPoints()) {
     painter->drawPoint(adjustPoint(point));
   }
 
   // Draw Lines
   painter->setPen(linePen);
-  for (auto& line : state.getLines()) {
+  for (auto& line : state->getLines()) {
     auto&& start = adjustPoint(line.p1());
     auto&& end = adjustPoint(line.p2());
     painter->drawLine(start, end);

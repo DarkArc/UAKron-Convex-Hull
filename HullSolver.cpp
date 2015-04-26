@@ -13,8 +13,8 @@ void HullSolver::calculate() {
     if (!timeline.hasVal()) {
       timeline.setVal(m_algorithm->getTimeline(inputPts));
       auto events = timeline.getVal().getEvents();
-      auto points = events[0].getPoints();
-      auto hullPoints = events[events.size() - 1].getPoints();
+      auto points = events[0]->getPoints();
+      auto hullPoints = events[events.size() - 1]->getPoints();
 
       emit solutionFound(timeline.getVal());
       emit solutionFound(

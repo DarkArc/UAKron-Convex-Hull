@@ -25,7 +25,7 @@ public:
   Optional(const T& val);
 
   bool hasVal() const;
-  T getVal() const;
+  T& getVal();
 
   void clearVal();
   void setVal(const T& val);

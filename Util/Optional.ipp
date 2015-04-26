@@ -50,7 +50,7 @@ template <typename T>
     @returns the stored object if successful.
 */
 template <typename T>
-  T Optional<T>::getVal() const {
+  T& Optional<T>::getVal() {
     if (!hasVal()) {
       throw std::runtime_error("There is currently no held value!");
     }
