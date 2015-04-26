@@ -45,7 +45,7 @@ HullTimeline GrahamScan::getTimeline(const std::vector<QPoint>& nPts) {
   std::swap(pts[0], findSmallestYPoint(pts));
 
   // Sort the points
-  std::sort(pts.begin() + 1, pts.end(), *this);
+  std::stable_sort(pts.begin() + 1, pts.end(), *this);
 
   timeTrackRecord();
 
@@ -194,10 +194,5 @@ int GrahamScan::sqrDist(const QPoint& p1, const QPoint& p2) const {
 */
 bool GrahamScan::operator () (const QPoint& p1, const QPoint& p2) const {
    // Find orientation
-   int o = ccw(pts[0], p1, p2);
-   if (o == 0) {
-     return sqrDist(pts[0], p2) < sqrDist(pts[0], p1);
-   }
-
-   return o == 2;
+   return ccw(pts[0], p1, p2) == 2;
 }
