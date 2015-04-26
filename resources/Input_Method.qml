@@ -24,7 +24,7 @@ ColumnLayout {
     SpinBox {
       id: max_point
       value: random_input.maxPoint
-      maximumValue: 9999
+      maximumValue: 100000
     }
 
     Button {
@@ -58,7 +58,7 @@ ColumnLayout {
     SpinBox {
       id: radius
       value: circular_input.radius
-      maximumValue: 9999
+      maximumValue: 100000
     }
 
     Button {
