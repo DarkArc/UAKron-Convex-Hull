@@ -14,15 +14,20 @@ void HullSolver::calculate() {
       timeline.setVal(m_algorithm->getTimeline(inputPts));
       auto events = timeline.getVal().getEvents();
       auto points = events[0].getPoints();
-      auto pointsFinal = events[events.size() - 1].getPoints();
+      auto hullPoints = events[events.size() - 1].getPoints();
 
       emit solutionFound(timeline.getVal());
-      emit solutionFound(m_algorithm->name(), points.size(), m_algorithm->getTime());
+      emit solutionFound(
+        m_algorithm->name(),
+        points.size(),
+        hullPoints.size(),
+        m_algorithm->getTime()
+      );
 
       for (auto& point :points) {
         emit origPointDiscovered(point.x(), point.y());
       }
-      for (auto& point :pointsFinal) {
+      for (auto& point :hullPoints) {
         emit hullPointFound(point.x(), point.y());
       }
     }

@@ -47,7 +47,12 @@ signals:
   void hullPointFound(const int& x, const int& y) const;
 
   void solutionFound(const HullTimeline&) const;
-  void solutionFound(const QString& a, const int& b, const double& c) const;
+  void solutionFound(
+    const QString& algorithm,
+    const int& origPoints,
+    const int& hullPoints,
+    const double& time
+  ) const;
 
   void algorithmChanged(const QString&) const;
   void inputChanged(const QString&) const;

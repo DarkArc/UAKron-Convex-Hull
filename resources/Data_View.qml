@@ -9,7 +9,7 @@ SplitView {
   Connections {
     target: hull_solver
     onSolutionFound: {
-      addTiming(a, b, c)
+      addTiming(algorithm, origPoints, hullPoints, time)
       purgeOldPoints()
     }
 
@@ -22,8 +22,8 @@ SplitView {
     }
   }
 
-  function addTiming(algorithm, points, time) {
-    timings.append({"algorithm": algorithm, "points": points, "time": time})
+  function addTiming(algorithm, points, hullPoints, time) {
+    timings.append({"algorithm": algorithm, "points": points, "hullPoints": hullPoints, "time": time})
   }
 
   function addOrigPoint(x, y) {
@@ -127,7 +127,12 @@ SplitView {
       }
       TableViewColumn {
         role: "points"
-        title: "Points"
+        title: "Point Count"
+        width: 100
+      }
+      TableViewColumn {
+        role: "hullPoints"
+        title: "Hull Point Count"
         width: 100
       }
       TableViewColumn {
