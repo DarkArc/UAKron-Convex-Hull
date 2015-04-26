@@ -1,6 +1,6 @@
 #include "HullRenderer.hpp"
 
-#include <QDebug>
+#include <memory>
 
 HullRenderer::HullRenderer(QQuickItem *parent) : QQuickPaintedItem(parent) {
   setRenderTarget(QQuickPaintedItem::FramebufferObject);
@@ -15,7 +15,7 @@ void HullRenderer::paint(QPainter *painter) {
   QPen pointPen(QBrush(Qt::blue), 10, Qt::SolidLine, Qt::RoundCap);
   QPen linePen(QBrush(Qt::black), 4, Qt::SolidLine, Qt::RoundCap);
 
-  HullState* state = timeline.getEvents()[position];
+  std::shared_ptr<HullState> state = timeline.getEvents()[position];
 
   // Draw Points
   painter->setPen(pointPen);

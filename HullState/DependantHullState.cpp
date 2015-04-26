@@ -1,7 +1,7 @@
 #include "DependantHullState.hpp"
 
 DependantHullState::DependantHullState(
-  const HullState* parent,
+  const std::shared_ptr<HullState> parent,
   const std::vector<int>& remPoints,
   const std::vector<QPoint>& addPoints,
   const std::vector<int>& remLines,

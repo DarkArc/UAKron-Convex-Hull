@@ -4,29 +4,22 @@
 #include <QPoint>
 
 #include <vector>
+#include <memory>
 
 #include "HullState/HullState.hpp"
 
 class HullTimeline {
   QPoint min;
   QPoint max;
-  std::vector<HullState*> events;
+  std::vector<std::shared_ptr<HullState>> events;
 public:
   HullTimeline();
-  HullTimeline(const std::vector<HullState*>&);
-
-  HullTimeline(const HullTimeline&);
-  HullTimeline(HullTimeline&&);
-
-  ~HullTimeline();
-
-  HullTimeline& operator = (const HullTimeline&);
-  HullTimeline& operator = (HullTimeline&&);
+  HullTimeline(const std::vector<std::shared_ptr<HullState>>&);
 
   QPoint getMin() const;
   QPoint getMax() const;
 
-  std::vector<HullState*> getEvents() const;
+  std::vector<std::shared_ptr<HullState>> getEvents() const;
 
   int getEventCount() const;
 private:

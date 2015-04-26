@@ -17,10 +17,10 @@ QString JarvisMarch::name() const {
 HullTimeline JarvisMarch::getTimeline(const std::vector<QPoint>& nPts) {
   // Update internal class level variables
   pts = nPts;
-  stages = std::vector<HullState*>();
+  stages = std::vector<std::shared_ptr<HullState>>();
   timeTrackInit();
 
-  stages.push_back(new StandaloneHullState(pts, std::vector<QLine>()));
+  stages.emplace_back(new StandaloneHullState(pts, std::vector<QLine>()));
 
   timeTrackUpdate();
   // Must be at least 3 points
@@ -45,12 +45,13 @@ HullTimeline JarvisMarch::getTimeline(const std::vector<QPoint>& nPts) {
 
   while (true) {
     int q = (p + 1) % nPts.size();
+    auto lastClean = *stages.rbegin();
     for (unsigned int i = 0; i < nPts.size(); ++i) {
       if (ccw(nPts[p], nPts[i], nPts[q]) == 1) {
         q = i;
       }
       timeTrackRecord();
-      stages.push_back(captureSnapshot(hull, nPts[i]));
+      stages.push_back(captureSnapshot(lastClean, hull, nPts[i]));
       timeTrackUpdate();
     }
 
@@ -66,17 +67,17 @@ HullTimeline JarvisMarch::getTimeline(const std::vector<QPoint>& nPts) {
   }
 
   // Finalize the hull by adding the connecting snapshot
-  HullState* last = *stages.rbegin();
+  std::shared_ptr<HullState> last = *stages.rbegin();
   auto finalLines = last->getLines();
   finalLines.pop_back();
   finalLines.emplace_back(*hull.begin(), *hull.rbegin());
 
-  stages.push_back(new StandaloneHullState(hull, finalLines));
+  stages.emplace_back(new StandaloneHullState(hull, finalLines));
 
   return HullTimeline(stages);
 }
 
-HullState* JarvisMarch::captureSnapshot(const std::vector<QPoint>& hullPts) const {
+std::shared_ptr<HullState> JarvisMarch::captureSnapshot(const std::vector<QPoint>& hullPts) const {
 
   std::vector<QLine> lSnap;
 
@@ -84,12 +85,27 @@ HullState* JarvisMarch::captureSnapshot(const std::vector<QPoint>& hullPts) cons
     lSnap.emplace_back(hullPts[k], hullPts[k + 1]);
   }
 
-  return new StandaloneHullState(pts, lSnap);
+  return std::shared_ptr<HullState>(new StandaloneHullState(pts, lSnap));
 }
 
-HullState* JarvisMarch::captureSnapshot(std::vector<QPoint> hullPts, const QPoint& testPt) const {
-  hullPts.push_back(testPt);
-  return captureSnapshot(hullPts);
+std::shared_ptr<HullState> JarvisMarch::captureSnapshot(std::shared_ptr<HullState> last, std::vector<QPoint> curHull, const QPoint& testPt) const {
+
+  auto lastLines = last->getLines();
+
+  if (lastLines.empty()) {
+    curHull.push_back(testPt);
+    return captureSnapshot(curHull);
+  }
+
+  return std::shared_ptr<HullState>(
+    new DependantHullState(
+      last,
+      std::vector<int>(),
+      std::vector<QPoint>(),
+      std::vector<int>(),
+      std::vector<QLine>({QLine(lastLines.rbegin()->p2(), testPt)})
+    )
+  );
 }
 
 int JarvisMarch::ccw(const QPoint& p1, const QPoint& p2, const QPoint& p3) const {

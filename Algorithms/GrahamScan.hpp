@@ -23,7 +23,7 @@
 
 class GrahamScan : public HullAlgorithm {
   std::vector<QPoint> pts;
-  std::vector<HullState*> stages;
+  std::vector<std::shared_ptr<HullState>> stages;
 public:
   GrahamScan();
   virtual ~GrahamScan();
@@ -31,7 +31,7 @@ public:
   virtual QString name() const;
   virtual HullTimeline getTimeline(const std::vector<QPoint>&);
 private:
-  HullState* captureSnapShot(std::stack<QPoint>, const unsigned int&) const;
+  std::shared_ptr<HullState> captureSnapShot(std::stack<QPoint>, const unsigned int&) const;
 
   /* Internal functions for calculating Convex Hull by Graham Scan */
   QPoint& findSmallestYPoint(std::vector<QPoint>&) const;

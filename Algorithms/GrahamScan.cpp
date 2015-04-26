@@ -34,10 +34,10 @@ QString GrahamScan::name() const {
 HullTimeline GrahamScan::getTimeline(const std::vector<QPoint>& nPts) {
   // Update internal class level variables
   pts = nPts;
-  stages = std::vector<HullState*>();
+  stages = std::vector<std::shared_ptr<HullState>>();
   timeTrackInit();
 
-  stages.push_back(new StandaloneHullState(nPts, std::vector<QLine>()));
+  stages.emplace_back(new StandaloneHullState(nPts, std::vector<QLine>()));
 
   timeTrackUpdate();
 
@@ -72,18 +72,18 @@ HullTimeline GrahamScan::getTimeline(const std::vector<QPoint>& nPts) {
   }
 
   // Finalize the hull by adding the connecting snapshot
-  HullState* last = *stages.rbegin();
+  std::shared_ptr<HullState> last = *stages.rbegin();
   auto finalPoints = last->getPoints();
   auto finalLines = last->getLines();
 
   finalLines.emplace_back(*finalPoints.begin(), *finalPoints.rbegin());
 
-  stages.push_back(new StandaloneHullState(finalPoints, finalLines));
+  stages.emplace_back(new StandaloneHullState(finalPoints, finalLines));
 
   return HullTimeline(stages);
 }
 
-HullState* GrahamScan::captureSnapShot(std::stack<QPoint> hullStack,
+std::shared_ptr<HullState> GrahamScan::captureSnapShot(std::stack<QPoint> hullStack,
     const unsigned int& iteration) const {
 
   std::vector<QPoint> pSnap;
@@ -104,7 +104,7 @@ HullState* GrahamScan::captureSnapShot(std::stack<QPoint> hullStack,
     }
   }
 
-  return new StandaloneHullState(pSnap, lSnap);
+  return std::shared_ptr<HullState>(new StandaloneHullState(pSnap, lSnap));
 }
 
 /* Function Definitions */
