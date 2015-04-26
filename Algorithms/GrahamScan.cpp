@@ -60,7 +60,7 @@ HullTimeline GrahamScan::getTimeline(const std::vector<QPoint>& nPts) {
   }
 
   for (unsigned int i = 3; i < pts.size(); ++i) {
-    while (ccw(secondToTop(hullStack), hullStack.top(), pts[i]) != 2) {
+    while (hullStack.size() > 1 && ccw(secondToTop(hullStack), hullStack.top(), pts[i]) != 2) {
       hullStack.pop();
       timeTrackRecord();
       stages.push_back(captureSnapShot(hullStack, i));
