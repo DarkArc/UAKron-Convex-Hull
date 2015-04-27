@@ -18,43 +18,106 @@
 #include <chrono>
 #include <random>
 
+/** Construct a new RandomPointInput object.
+
+    Constructs a new RandomPointInput object with an initial
+    point generation count, and an initial max value for
+    point generations.
+ */
 RandomPointInput::RandomPointInput(const unsigned int& m_pointCount, const unsigned int& m_maxPoint)
                       : m_pointCount(m_pointCount), m_maxPoint(m_maxPoint) { }
 
-RandomPointInput::~RandomPointInput() { }
+/** Destruct the current RandomPointInput object.
 
+    Destructs the current RandomPointInput object.
+    This destructor is manually defined due to
+    the use of polymorphism with this class,
+    and the need for a virtual destructor.
+ */
+ RandomPointInput::~RandomPointInput() { }
+
+/** Retrieve the name of this input provider.
+
+    @returns the QString "Random Point".
+ */
 QString RandomPointInput::name() const {
   return "Random Point";
 }
 
+/** Retrieve the number of points to generate.
+
+    Retrieves the number of points which
+    will be generated upon an input request.
+
+    @returns the number of points which will
+    be generated.
+ */
 unsigned int RandomPointInput::pointCount() const {
   return m_pointCount;
 }
 
+/** Set the number of points to generate.
+
+    Sets the number of points which
+    will be generated upon an input request.
+
+    Upon success a pointCountChanged(); signal
+    will be emitted.
+ */
 void RandomPointInput::setPointCount(const unsigned int& m_pointCount) {
   this->m_pointCount = m_pointCount;
   emit pointCountChanged();
 }
 
+/** Retrieve the maximum point coordinate.
+
+    Retrieves the maximum point coordinate which
+    may be generated upon an input request. Such
+    that any generated point has the bounds
+    [0, maximum point) on both x & y.
+
+    @return the maximum point coordinate.
+ */
 unsigned int RandomPointInput::maxPoint() const {
   return m_maxPoint;
 }
 
+/** Set the maximum point coordinate.
+
+    Sets the maximum point coordinate which
+    may be generated upon an input rquest.
+    Such that any generated point has the bounds
+    [0, maximum point) on both x & y.
+
+    @params m_maxPoint
+    The maximum point.
+ */
 void RandomPointInput::setMaxPoint(const unsigned int& m_maxPoint) {
   this->m_maxPoint = m_maxPoint;
   emit maxPointChanged();
 }
 
-std::vector<QPoint> RandomPointInput::getPoints() {
+/** Generate a collection of points.
 
+    Generates a collection of points such that the
+    number of points is limited to the object's
+    maximum points value, and that all points
+    are within the x & y bounds
+    [0, maximum point coordinate).
+
+    @returns the generated collection of points.
+ */
+std::vector<QPoint> RandomPointInput::getPoints() {
   std::vector<QPoint> points;
 
+  // Initalize a random generator
   unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
   std::minstd_rand0 generator(seed);
 
+  // Create random m_pointCount random points within the bounds
+  // of m_maxPoint
   for (unsigned int i = 0; i < m_pointCount; ++i) {
     points.push_back(QPoint(generator() % m_maxPoint, generator() % m_maxPoint));
   }
-
   return points;
 }
