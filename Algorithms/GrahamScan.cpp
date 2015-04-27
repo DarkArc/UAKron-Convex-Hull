@@ -25,74 +25,108 @@
 
 #include "../HullState/StandaloneHullState.hpp"
 
+/** Construct a new GrahamScan object.
+
+    Constructs a new empty GrahamScan object.
+ */
 GrahamScan::GrahamScan() { }
 
+/** Destruct the current GrahamScan object.
+
+    Destructs the current GrahamScan object.
+    This destructor is manually defined due to
+    the use of polymorphism with this class,
+    and the need for a virtual destructor.
+ */
 GrahamScan::~GrahamScan() { }
 
+/** Retrieve the name of this algorithm.
+
+    @returns the QString "Graham Scan".
+ */
 QString GrahamScan::name() const {
   return "Graham Scan";
 }
 
-//======================================================================
-/*
-    Pre:
-    Post: Returns a stack of all the pts on the convex hull
+/** Execute the aglorithm.
 
-    Desc: Complexity is:
-          Find smallest Y value = O(n)
-          Sort pts = O(nlog(n))
-          Find hull = O(n)
+    Executes the aglorithm on the provided set of points,
+    while capturing individual states of the algorithm in
+    HullState snapshots.
+
+    Complexity is:
+      Find smallest y value = O(n)
+      Sort pts = O(nlog(n))
+      Find hull = O(n)
 
     The full relation is: nlog(n) + 2n. Dropping the linear factor we get
     O(nlog(n)) complexity for the full algorithm.
 
-*/
+    @param nPts
+    The points to make convex hull out of.
+
+    @returns the HullTimeline representing all states
+    of the algorithm.
+ */
 HullTimeline GrahamScan::getTimeline(const std::vector<QPoint>& nPts) {
   // Update internal class level variables
   pts = nPts;
   stages = std::vector<std::shared_ptr<HullState>>();
+
+  // Create an initial point snapshot
+  stages.emplace_back(new StandaloneHullState(nPts, std::vector<QLine>()));
+  // Start the time Tracker
   timeTrackInit();
 
-  stages.emplace_back(new StandaloneHullState(nPts, std::vector<QLine>()));
-
-  timeTrackUpdate();
-
-  // Make the initial point the lowest Y
-  std::swap(pts[0], findSmallestYPoint(pts));
+  // Make the initial point the lowest y
+  std::swap(pts[0], findSmallestYPoint());
 
   // Sort the points
   std::stable_sort(pts.begin() + 1, pts.end(), *this);
 
-  timeTrackRecord();
-
   // Create the hull's stack
-  std::stack<QPoint> hullStack;
+  std::vector<QPoint> hullStack;
   for (unsigned int i = 0; i < 3; ++ i) {
-    hullStack.push(pts[i]);
+    hullStack.push_back(pts[i]);
+
+    // Record the time, ommitting the snapshot capture
     timeTrackRecord();
     stages.push_back(captureSnapShot(hullStack, i));
     timeTrackUpdate();
   }
 
+  // Process the resulting stack
   for (unsigned int i = 3; i < pts.size(); ++i) {
-    while (hullStack.size() > 1 && ccw(secondToTop(hullStack), hullStack.top(), pts[i]) != 2) {
-      hullStack.pop();
+    // If there are more than two points, compare the cross
+    // product to determine the of the "turn"
+    // if the turn is not counter clockwise
+    // pop off points until we have a counter clockwise turn
+    while (hullStack.size() > 1 && ccw(*(hullStack.rbegin() + 1), *hullStack.rbegin(), pts[i]) != 2) {
+      hullStack.pop_back();
+
+      // Record the time, ommiting the snapshot capture
       timeTrackRecord();
       stages.push_back(captureSnapShot(hullStack, i));
       timeTrackUpdate();
     }
 
-    hullStack.push(pts[i]);
+    // Pushback the point as being the next point in the hull (thus far)
+    hullStack.push_back(pts[i]);
+
+    // Record the time ommiting the snapshot capture
     timeTrackRecord();
     stages.push_back(captureSnapShot(hullStack, i));
     timeTrackUpdate();
   }
 
-  // Finalize the hull by adding the connecting snapshot
+  // Finalize the hull by adding the final line
+  // so that we get a complete hull
   std::shared_ptr<HullState> last = *stages.rbegin();
   auto finalPoints = last->getPoints();
   auto finalLines = last->getLines();
 
+  // Create a line connecting the last point of the final
+  // point set to the first point
   finalLines.emplace_back(*finalPoints.begin(), *finalPoints.rbegin());
 
   stages.emplace_back(new StandaloneHullState(finalPoints, finalLines));
@@ -100,52 +134,60 @@ HullTimeline GrahamScan::getTimeline(const std::vector<QPoint>& nPts) {
   return HullTimeline(stages);
 }
 
-std::shared_ptr<HullState> GrahamScan::captureSnapShot(std::stack<QPoint> hullStack,
-    const unsigned int& iteration) const {
+/** Capture an algorithm snapshot.
 
-  std::vector<QPoint> pSnap;
+    Captures a snapshot of the algorithm at the current
+    time using a StandaloneHullState using the provided
+    hullStack for the point set, and line generation.
+
+    @param hullStack
+    The points of the convex hull to construct the line
+    set from.
+
+    @return a shared_ptr to a StandaloneHullState
+    holding the captured snapshot.
+ */
+std::shared_ptr<HullState> GrahamScan::captureSnapShot(std::vector<QPoint> hullStack,
+    const unsigned int& iteration) const {
   std::vector<QLine> lSnap;
 
   // Reserve memory
-  pSnap.reserve(hullStack.size());
   lSnap.reserve(hullStack.size() - 1);
 
-  while (!hullStack.empty()) {
-    pSnap.push_back(hullStack.top());
-    hullStack.pop();
+  // Create the lines based on the hullStack
+  for (unsigned int k = 0; k < hullStack.size() - 1; ++k) {
+    lSnap.emplace_back(hullStack[k], hullStack[k + 1]);
   }
 
-  for (unsigned int k = 0; k < pSnap.size() - 1; ++k) {
-    lSnap.emplace_back(pSnap[k], pSnap[k + 1]);
-  }
-
+  // If the iteration is not the last, also add all
+  // points not yet checked to be displayed
   if (iteration != pts.size() - 1) {
     for (unsigned int k = iteration; k < pts.size(); ++k) {
-      pSnap.push_back(pts[k]);
+      hullStack.push_back(pts[k]);
     }
   }
 
-  return std::shared_ptr<HullState>(new StandaloneHullState(pSnap, lSnap));
+  return std::shared_ptr<HullState>(new StandaloneHullState(hullStack, lSnap));
 }
 
-/* Function Definitions */
+/** Find the smallest y point.
 
-//===================================================================
+    Finds the smallest y point in the object's point set
+    such that the discovered y point is both the lowest
+    in y value, and the greatest in x value of all points.
 
-/*
-    Pre:  Vector of QPoints that contains the set of all the pts.
-    Post: Returns a reference to the point with the smallest Y-value
+    The complexity of this function is O(N) because it must look
+    at each point to check the y value.
 
-    Desc: The complexity of this function is O(N) because it must look
-          at each point to check the Y value.
-*/
-
-QPoint& GrahamScan::findSmallestYPoint(std::vector<QPoint>& pts) const {
+    @returns a reference to the QPoint with the smallest
+    y value, and greatest x value.
+ */
+QPoint& GrahamScan::findSmallestYPoint() {
   //Initialized the values for the for loop
   int minY = pts[0].y();
   int minIndex = 0;
 
-  // Iterate over all the point to find the smallest y value
+  // Find the smallest y point, with the greatest x value
   for (unsigned int i = 1; i < pts.size(); ++i) {
     int y = pts[i].y();
     if ((y < minY || (minY == y && pts[i].x() >= pts[minIndex].x()))) {
@@ -157,68 +199,70 @@ QPoint& GrahamScan::findSmallestYPoint(std::vector<QPoint>& pts) const {
   return pts[minIndex];
 }
 
-//===================================================================
+/** Calculate the direction
 
-/*
-    Pre:  A stack that contains at least two QPoints
-    Post: Returns a copy of the second to the top QPoint in the stack.
-          Does not change the contents of the stack.
+    Calculates the direction based on the cross product.
+    This function computes the z-coordinate of the cross product
 
-    Desc: Complexity is O(1)
-*/
+    Complexity is O(1). Reference http://en.wikipedia.org/wiki/Graham_scan
+    for psuedo code implementation.
 
-QPoint GrahamScan::secondToTop(std::stack<QPoint> s) const {
-  s.pop();
-  return s.top();
-}
+    @param p1
+    The first point to compare.
 
-//======================================================================
+    @param p2
+    The second point to compare.
 
-/*
-    Pre:
-    Post: Returns 1 if pts are clockwise, and 2 if counter-clockwise,
-          and == 0 if collinear.
+    @param p3
+    The third point to compare.
 
-    Desc: Complexity is O(1). Reference http://en.wikipedia.org/wiki/Graham_scan
-          for psuedo code implementation.
-
-          This function computes the z-coordinate of the cross product
-*/
-
+    @returns 0 if the points are colinear, 1 if there is a clock
+    wise direction, and 2 if there is a conterclockwise direction.
+ */
 int GrahamScan::ccw(const QPoint& p1, const QPoint& p2, const QPoint& p3) const {
   int val = (p2.y() - p1.y()) * (p3.x() - p2.x()) -
             (p2.x() - p1.x()) * (p3.y() - p2.y());
 
-  if (val == 0) return 0;  // colinear
+  if (val == 0) return 0;   // colinear
   return (val > 0) ? 1 : 2; // clock or counterclock wise
 }
 
-//======================================================================
+/** Calculate the square distance between two points.
 
-/*
-    Pre:
-    Post: Returns the square of the distance between two pts
+    Calculates the square distance between two points.
 
-    Desc: Complexity is O(1)
+    Complexity is O(1).
 
-*/
+    @param p1
+    The first point.
+
+    @param p2
+    The second point.
+
+    @returns the calculated square distance.
+ */
 int GrahamScan::sqrDist(const QPoint& p1, const QPoint& p2) const {
   return (p1.x() - p2.x()) * (p1.x() - p2.x()) + (p1.y() - p2.y()) * (p1.y() - p2.y());
 }
 
-//======================================================================
+/** Compare two QPoints.
 
-/*
-    Pre:
-    Post: Returns -1 if the first point's polar angle is less than the
-          polar angle of the second point. Returns 1 otherwise.
-*/
+    Compares two QPoints using their cross product
+    with the lowest y point to determine which
+    point has a lower angle from the x-axis.
+
+    If the cross product determines that there is a counterclock
+    wise movement, then p1 is considered less than p2.
+
+    @param p1
+    The first point to compare.
+
+    @param p2
+    The second point to compare.
+
+    @return true if the points are counter clockerwise.
+ */
 bool GrahamScan::operator () (const QPoint& p1, const QPoint& p2) const {
-  // Find orientation
   int o = ccw(pts[0], p1, p2);
-  if (o == 0) {
-   return sqrDist(pts[0], p2) >= sqrDist(pts[0], p1);
-  }
-
-  return o == 2;
+  return o == 0 ? sqrDist(pts[0], p2) >= sqrDist(pts[0], p1) : o == 2;
 }
