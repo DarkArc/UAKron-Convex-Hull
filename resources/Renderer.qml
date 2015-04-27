@@ -29,6 +29,8 @@ ColumnLayout {
     Layout.fillWidth: true
     Layout.fillHeight: true
 
+    fillColor: "white"
+
     onStageComplete: {
       renderer_progress.value = renderer.curPosition() / renderer.maxPosition()
     }
@@ -44,6 +46,7 @@ ColumnLayout {
 
     anchors.top: renderer.bottom
     anchors.left: renderer.left
+    anchors.topMargin: 12
     anchors.leftMargin: 10
 
     ProgressBar {
@@ -56,6 +59,7 @@ ColumnLayout {
 
     anchors.top: renderer.bottom
     anchors.right: renderer.right
+    anchors.topMargin: 12
     anchors.rightMargin: 10
 
     Layout.alignment: Qt.AlignRight
