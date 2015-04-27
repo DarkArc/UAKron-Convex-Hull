@@ -78,10 +78,14 @@ DependantHullState::~DependantHullState() { }
     state as of this HullState.
  */
 std::vector<QPoint> DependantHullState::getPoints() const {
+  // Retrieve the parent's points
   auto parentPoints = parent->getPoints();
+  // Erase the indexs specified by remPoints one-by-one
   for (auto& entry : remPoints) {
     parentPoints.erase(parentPoints.begin() + entry);
   }
+  // Insert the points in addPoints to the end of
+  // the point set
   parentPoints.insert(parentPoints.end(), addPoints.begin(), addPoints.end());
   return parentPoints;
 }
@@ -100,10 +104,14 @@ std::vector<QPoint> DependantHullState::getPoints() const {
     state as of this HullState.
  */
 std::vector<QLine> DependantHullState::getLines() const {
+  // Retrieve the parent's lines
   auto parentLines = parent->getLines();
+  // Erase the indexs specified by remLines one-by-one
   for (auto& entry : remLines) {
     parentLines.erase(parentLines.begin() + entry);
   }
+  // Insert the lines in addPoints to the end of
+  // the line set
   parentLines.insert(parentLines.end(), addLines.begin(), addLines.end());
   return parentLines;
 }
