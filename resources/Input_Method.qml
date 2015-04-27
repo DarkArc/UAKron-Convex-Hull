@@ -62,7 +62,7 @@ ColumnLayout {
     }
 
     Button {
-      text: "Load Random Dataset"
+      text: "Generate Circle"
 
       onClicked: {
         circular_input.pointCount = circ_point_count.value;
