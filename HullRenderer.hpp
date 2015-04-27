@@ -26,8 +26,8 @@ class HullRenderer : public QQuickPaintedItem {
   HullTimeline timeline;
   int position;
 public:
-  HullRenderer(QQuickItem *parent = 0);
-  void paint(QPainter *painter);
+  HullRenderer(QQuickItem* = 0);
+  void paint(QPainter*);
 
   bool hasHull() const;
 

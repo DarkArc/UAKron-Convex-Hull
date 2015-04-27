@@ -68,7 +68,7 @@ HullTimeline::HullTimeline(const std::vector<std::shared_ptr<HullState>>& events
   max = QPoint(maxX, maxY);
 }
 
-/** Retrieves the minimum point.
+/** Retrieve the minimum point.
 
     Retrieves the minimum point of the first
     event as defined by the event series this
@@ -84,7 +84,7 @@ QPoint HullTimeline::getMin() const {
   return min;
 }
 
-/** Retrieves the maximum point.
+/** Retrieve the maximum point.
 
     Retrieves the maximum point of the first
     event as defined by the event series this
@@ -100,7 +100,7 @@ QPoint HullTimeline::getMax() const {
   return max;
 }
 
-/** Retrieves the event vector.
+/** Retrieve the event vector.
 
     Retrieves the event vector held
     by this object.
@@ -112,7 +112,7 @@ std::vector<std::shared_ptr<HullState>> HullTimeline::getEvents() const {
   return events;
 }
 
-/** Retrieves the number of events.
+/** Retrieve the number of events.
 
     Retrieves the number of events in
     the event vector, without requiring
