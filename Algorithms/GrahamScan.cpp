@@ -100,7 +100,7 @@ HullTimeline GrahamScan::getTimeline(const std::vector<QPoint>& nPts) {
     // If there are more than two points, compare the cross
     // product to determine the of the "turn"
     // if the turn is not counter clockwise
-    // pop off points until we have a counter clockwise turn
+    // pop off points until there is a counter clockwise turn
     while (hullStack.size() > 1 && ccw(*(hullStack.rbegin() + 1), *hullStack.rbegin(), pts[i]) != 2) {
       hullStack.pop_back();
 
@@ -120,7 +120,7 @@ HullTimeline GrahamScan::getTimeline(const std::vector<QPoint>& nPts) {
   }
 
   // Finalize the hull by adding the final line
-  // so that we get a complete hull
+  // so that the final display is of a complete hull
   std::shared_ptr<HullState> last = *stages.rbegin();
   auto finalPoints = last->getPoints();
   auto finalLines = last->getLines();
