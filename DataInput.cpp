@@ -15,4 +15,11 @@
 
 #include "DataInput.hpp"
 
+/** Destruct the current DataInput object.
+
+    Destructs the current DataInput object.
+    This destructor is manually defined due to
+    the use of polymorphism with this class, and
+    the need for a virtual destructor.
+ */
 DataInput::~DataInput() { }
