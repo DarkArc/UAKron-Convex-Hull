@@ -29,20 +29,24 @@
 
 int main(int argc, char** argv) {
 
+  // Initialize the Qt Application
   QGuiApplication app(argc, argv);
 
+  // Register the HullRenderer QML Type
   qmlRegisterType<HullRenderer>("com.nearce.HullRenderer", 1, 0, "HullRenderer");
 
+  // Establish the Qt Quick View
   QQuickView view;
 
-  // Algorithm setup
+  // Create the algorithm objecsts
   GrahamScan grahamScan;
   JarvisMarch jarvisMarch;
 
-  // Input setup
+  // Create the input genration objects
   RandomPointInput randomPointInput(50, 1000);
   CircularPointInput circularPointInput(50, 1000);
 
+  // Establish list of avalible alogrithms & inputs for the Hull Solver
   QMap<QString, HullAlgorithm*> algorithms({
     {grahamScan.name(), &grahamScan},
     {jarvisMarch.name(), &jarvisMarch}
@@ -54,17 +58,20 @@ int main(int argc, char** argv) {
 
   HullSolver solver(algorithms, inputs);
 
+  // Inject some C++ objects into the QML document structure
   view.engine()->rootContext()->setContextProperty("random_input", &randomPointInput);
   view.engine()->rootContext()->setContextProperty("circular_input", &circularPointInput);
   view.engine()->rootContext()->setContextProperty("hull_solver", &solver);
 
+  // Establish a dynamicly resizing content resize policy & display the QML window
   view.setResizeMode(QQuickView::SizeRootObjectToView);
   view.setSource(QUrl("qrc:///resources/main.qml"));
   view.showMaximized();
 
+  // Create a signal slot connection between the HullRenderer QML object
+  // and the hull solver in C++ for convience
   HullRenderer* renderer = view.rootObject()->findChild<HullRenderer*>("renderer");
 
-  // C++ Program Logic
   QObject::connect(&solver, SIGNAL(solutionFound(const HullTimeline&)),
                    renderer, SLOT(setTimeline(const HullTimeline&)));
 
