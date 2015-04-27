@@ -15,16 +15,50 @@
 
 #include "StandaloneHullState.hpp"
 
+/** Construct a new StandaloneHullState object.
+
+    Constructs a new StandaloneHullState object which
+    stores the points, and lines of the hull.
+
+    @param points
+    The QPoints to store.
+
+    @param lines
+    The QLines to store.
+ */
 StandaloneHullState::StandaloneHullState(const std::vector<QPoint>& points,
                      const std::vector<QLine>& lines)
                      : points(points), lines(lines) { }
 
+/** Destruct the current StandaloneHullState object.
+
+    Destructs the current StandaloneHullState object.
+    This destructor is manually defined due to
+    the use of polymorphism with this class,
+    and the need for a virtual destructor.
+ */
 StandaloneHullState::~StandaloneHullState() { }
 
+/** Retrieve the stored points.
+
+    Retrieves the stored points on the hull
+    which compose the hull's current state.
+
+    @returns the points which make up the hull's
+    state as of this HullState.
+ */
 std::vector<QPoint> StandaloneHullState::getPoints() const {
   return points;
 }
 
+/** Retrieve the stored lines.
+
+    Retrieves the stored lines on the hull
+    which compose the hull's current state.
+
+    @returns the lines which make up the hull's
+    state as of this HullState.
+ */
 std::vector<QLine> StandaloneHullState::getLines() const {
   return lines;
 }
