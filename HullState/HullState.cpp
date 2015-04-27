@@ -15,4 +15,11 @@
 
 #include "HullState.hpp"
 
+/** Destruct the current HullState object.
+
+    Destructs the current HullState object.
+    This destructor is manually defined due to
+    the use of polymorphism with this class,
+    and the need for a virtual destructor.
+ */
 HullState::~HullState() { }
