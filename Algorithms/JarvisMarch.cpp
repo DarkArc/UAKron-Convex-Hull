@@ -16,7 +16,6 @@
 #include "JarvisMarch.hpp"
 
 #include <QLine>
-#include <QDebug>
 
 #include "../HullState/DependantHullState.hpp"
 #include "../HullState/StandaloneHullState.hpp"

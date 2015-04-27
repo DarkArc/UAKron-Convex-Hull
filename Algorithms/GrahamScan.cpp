@@ -16,7 +16,6 @@
 #include "GrahamScan.hpp"
 
 #include <QLine>
-#include <QDebug>
 
 #include <algorithm>
 #include <stdexcept>

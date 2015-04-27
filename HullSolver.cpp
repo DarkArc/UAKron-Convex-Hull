@@ -16,7 +16,6 @@
 #include "HullSolver.hpp"
 
 #include <QVariant>
-#include <QDebug>
 #include <QMetaProperty>
 
 /** Construct a new HullSolver object.
