@@ -59,6 +59,7 @@ SplitView {
   }
 
   SplitView {
+    height: (2 * parent.height) / 3
     ListModel {
         id: orig_points
     }
@@ -68,6 +69,8 @@ SplitView {
     }
 
     ColumnLayout {
+      width: parent.width / 2;
+
       Label {
         anchors.horizontalCenter: orig_table.horizontalCenter
 
@@ -95,6 +98,8 @@ SplitView {
     }
 
     ColumnLayout {
+      width: parent.width / 2;
+
       Label {
         anchors.horizontalCenter: hull_table.horizontalCenter
 
