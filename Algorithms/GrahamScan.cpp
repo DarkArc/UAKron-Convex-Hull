@@ -81,6 +81,7 @@ HullTimeline GrahamScan::getTimeline(const std::vector<QPoint>& nPts) {
       stages.push_back(captureSnapShot(hullStack, i));
       timeTrackUpdate();
     }
+
     hullStack.push(pts[i]);
     timeTrackRecord();
     stages.push_back(captureSnapShot(hullStack, i));
@@ -140,20 +141,20 @@ std::shared_ptr<HullState> GrahamScan::captureSnapShot(std::stack<QPoint> hullSt
 */
 
 QPoint& GrahamScan::findSmallestYPoint(std::vector<QPoint>& pts) const {
-    //Initialized the values for the for loop
-    int minY = pts[0].y();
-    int minIndex = 0;
+  //Initialized the values for the for loop
+  int minY = pts[0].y();
+  int minIndex = 0;
 
-    // Iterate over all the point to find the smallest y value
-    for (unsigned int i = 1; i < pts.size(); ++i) {
-       int y = pts[i].y();
-       if ((y < minY || (minY == y && pts[i].x() >= pts[minIndex].x()))) {
-         minY = pts[i].y();
-         minIndex = i;
-       }
+  // Iterate over all the point to find the smallest y value
+  for (unsigned int i = 1; i < pts.size(); ++i) {
+    int y = pts[i].y();
+    if ((y < minY || (minY == y && pts[i].x() >= pts[minIndex].x()))) {
+      minY = pts[i].y();
+      minIndex = i;
     }
+  }
 
-    return pts[minIndex];
+  return pts[minIndex];
 }
 
 //===================================================================
@@ -167,8 +168,8 @@ QPoint& GrahamScan::findSmallestYPoint(std::vector<QPoint>& pts) const {
 */
 
 QPoint GrahamScan::secondToTop(std::stack<QPoint> s) const {
-    s.pop();
-    return s.top();
+  s.pop();
+  return s.top();
 }
 
 //======================================================================
@@ -185,11 +186,11 @@ QPoint GrahamScan::secondToTop(std::stack<QPoint> s) const {
 */
 
 int GrahamScan::ccw(const QPoint& p1, const QPoint& p2, const QPoint& p3) const {
-    int val = (p2.y() - p1.y()) * (p3.x() - p2.x()) -
-              (p2.x() - p1.x()) * (p3.y() - p2.y());
+  int val = (p2.y() - p1.y()) * (p3.x() - p2.x()) -
+            (p2.x() - p1.x()) * (p3.y() - p2.y());
 
-    if (val == 0) return 0;  // colinear
-    return (val > 0) ? 1 : 2; // clock or counterclock wise
+  if (val == 0) return 0;  // colinear
+  return (val > 0) ? 1 : 2; // clock or counterclock wise
 }
 
 //======================================================================
@@ -202,7 +203,7 @@ int GrahamScan::ccw(const QPoint& p1, const QPoint& p2, const QPoint& p3) const 
 
 */
 int GrahamScan::sqrDist(const QPoint& p1, const QPoint& p2) const {
-    return (p1.x() - p2.x()) * (p1.x() - p2.x()) + (p1.y() - p2.y()) * (p1.y() - p2.y());
+  return (p1.x() - p2.x()) * (p1.x() - p2.x()) + (p1.y() - p2.y()) * (p1.y() - p2.y());
 }
 
 //======================================================================
@@ -213,11 +214,11 @@ int GrahamScan::sqrDist(const QPoint& p1, const QPoint& p2) const {
           polar angle of the second point. Returns 1 otherwise.
 */
 bool GrahamScan::operator () (const QPoint& p1, const QPoint& p2) const {
-   // Find orientation
-   int o = ccw(pts[0], p1, p2);
-   if (o == 0) {
-     return sqrDist(pts[0], p2) >= sqrDist(pts[0], p1);
-   }
+  // Find orientation
+  int o = ccw(pts[0], p1, p2);
+  if (o == 0) {
+   return sqrDist(pts[0], p2) >= sqrDist(pts[0], p1);
+  }
 
-   return o == 2;
+  return o == 2;
 }
